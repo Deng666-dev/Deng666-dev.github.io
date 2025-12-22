@@ -3660,6 +3660,13 @@ figure.highlight pre .javascript .function {
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
+#aside-content .card-categories .card-category-list > .parent > .child {
+  max-height: 0;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  visibility: hidden;
+}
 #aside-content .card-webinfo .webinfo .webinfo-item {
   display: -webkit-box;
   display: -moz-box;
@@ -3888,6 +3895,14 @@ figure.highlight pre .javascript .function {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+}
+.page .card-categories {
+  -webkit-box-ordinal-group: 'desc';
+  -moz-box-ordinal-group: 'desc';
+  -o-box-ordinal-group: 'desc';
+  -ms-flex-order: 'desc';
+  -webkit-order: 'desc';
+  order: 'desc';
 }
 @-moz-keyframes more-btn-move {
   0%, 100% {
