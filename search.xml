@@ -17,80 +17,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
-</blockquote>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-
-<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CTF-MISC-common</title>
-    <url>/2025/12/22/CTF-MISC/</url>
-    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
-<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
-<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>CTF-MISC</category>
-        <category>Common</category>
-      </categories>
-      <tags>
-        <tag>Misc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux.centos 搭建MySql8.x服务</title>
-    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
-    <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
-
-<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
-<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
-
-<h1 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux server</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux-samba</title>
     <url>/2025/12/24/Linux-samba/</url>
     <content><![CDATA[<blockquote>
@@ -129,6 +55,59 @@
       <categories>
         <category>Linux 运维</category>
         <category>Linux server</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux.centos 搭建MySql8.x服务</title>
+    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
+
+<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
+<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
+
+<h1 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux server</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 基础</title>
+    <url>/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<p>在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳</p>
+<h2 id="系统启动-二进制文件"><a href="#系统启动-二进制文件" class="headerlink" title="系统启动&amp;二进制文件"></a>系统启动&amp;二进制文件</h2><p>&#x2F;bin<br>:用户可用 启动时会用到的命令 即使系统没有挂载 也能使用</p>
+<p>&#x2F;boot<br>:存放启动Linux系统所需的核心文件<br>内容:<br>Kernel              :通常以 vmlinuz 开头的文件<br>Initrd&#x2F;Initramfs    :初始化内存盘镜像<br>Bootloader          :如 GRUB 的配置文件(&#x2F;boot&#x2F;grub&#x2F;grub.cfg)<br><span style="color: red; font-weight: bold;">如删除了目录文件 系统将无法启动</span></p>
+<p>&#x2F;sbin<br>:存放root使用的系统管理目录<br>内容:<br>iptabk.reboot.fdisk.ifconfig</p>
+<p>&#x2F;lib &amp; lib64<br>:存放两者中二进制文件运行所需的共享库文件</p>
+<h2 id="配置文件与用户数据"><a href="#配置文件与用户数据" class="headerlink" title="配置文件与用户数据"></a>配置文件与用户数据</h2><p>&#x2F;etc<br>:系统主要的配置文件目录<br>&#x2F;etc&#x2F;passwd<br>:用户账号信息<br>&#x2F;etc&#x2F;shadow<br>:用户密码信息<br>&#x2F;etc&#x2F;fstab<br>:磁盘挂载配置<br>&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts<br>:网卡配置<br><span style="color: red; font-weight: bold;">禁止存放二进制可执行文件</span></p>
+<p>&#x2F;home<br>:普通用户的家目录</p>
+<p>&#x2F;root<br>:root家目录</p>
+<h2 id="可变数据-临时文件"><a href="#可变数据-临时文件" class="headerlink" title="可变数据 &amp;&amp; 临时文件"></a>可变数据 &amp;&amp; 临时文件</h2><p>&#x2F;var<br>:存放经常变化的数据<br>&#x2F;var&#x2F;log    :系统和软件日志文件(排错必看!!!)<br>&#x2F;var&#x2F;www    :存放于web服务器的网页文件<br>&#x2F;var&#x2F;lib    :数据库文件.mysql<br>&#x2F;var&#x2F;run    :存放当前运行进程的PID文件</p>
+<p>&#x2F;tmp<br>:存放各种临时文件</p>
+<h2 id="虚拟文件系统"><a href="#虚拟文件系统" class="headerlink" title="虚拟文件系统"></a>虚拟文件系统</h2><p>&#x2F;proc<br>:内核和进程信息的虚拟文件系统<br>&#x2F;proc&#x2F;cpuinfo<br>:CPU信息<br>&#x2F;proc&#x2F;meminfo<br>:内存使用情况<br>&#x2F;proc&#x2F;version<br>:内核版本<br>&#x2F;proc&#x2F;[PID]<br>:对应特定进程的详细信息</p>
+<h2 id="设备挂载"><a href="#设备挂载" class="headerlink" title="设备挂载"></a>设备挂载</h2><p>&#x2F;dev<br>:存放设备文件(硬件被映射为文件)<br>常见：<br>&#x2F;dev&#x2F;sda    :第一块物理硬盘<br>&#x2F;dev&#x2F;sr0    :光驱<br>&#x2F;dev&#x2F;tty    :终端设备<br>&#x2F;dev&#x2F;tty    :终端设备<br>&#x2F;dev&#x2F;null   :黑洞设备(丢弃一切写入的shuju)<br>&#x2F;dev&#x2F;zero   :零设备(可无限产生0数据)</p>
+<p>&#x2F;mut<br>:管理员临时挂载文件系统的目录</p>
+<p>&#x2F;media<br>&#x2F;media&#x2F;cdrom<br>&#x2F;media&#x2F;floppy<br>&#x2F;media&#x2F;u<br>:用于挂载本地磁盘或其他存储设备</p>
+<h2 id="三方软件与庞大的-usr"><a href="#三方软件与庞大的-usr" class="headerlink" title="三方软件与庞大的 &#x2F;usr"></a>三方软件与庞大的 &#x2F;usr</h2><p>&#x2F;usr<br>:Linux中最大的目录 存放随系统发行但不属于核心启动必须的应用程序和文件<br>&#x2F;usr&#x2F;bin<br>:大多数用户安装的应用程序<br>&#x2F;usr&#x2F;include<br>:标准包含头文件<br>&#x2F;usr&#x2F;lib<br>:&#x2F;usr&#x2F;bin&#x2F;和&#x2F;usr&#x2F;sbin&#x2F;中二进制文件的库<br>&#x2F;usr&#x2F;local<br>:管理员手动编译安装的软件<br>&#x2F;usr&#x2F;share<br>:共享数据<br>&#x2F;usr&#x2F;sbin<br>:非必要的系统二进制文件<br>&#x2F;usr&#x2F;src<br>:源代码 如内核源代码及其头文件</p>
+<p>&#x2F;opt<br>:用于安装大型的 自包含的第三方商业软件</p>
+]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux 知识点</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -194,6 +173,52 @@
       </tags>
   </entry>
   <entry>
+    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
+    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
+    <content><![CDATA[<blockquote>
+<p><em><strong>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线</strong></em></p>
+</blockquote>
+<h2 id="开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户"><a href="#开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户"></a>开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)</p>
+<p>Remove anonymous users? [Y&#x2F;n] -&gt; Y</p>
+<p>Disallow root login remotely? [Y&#x2F;n] -&gt; Y</p>
+<p>Remove test database? [Y&#x2F;n] -&gt; Y</p>
+<p>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
+<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
+<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
+
+<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
+</code></pre>
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTF-MISC-common</title>
+    <url>/2025/12/22/CTF-MISC/</url>
+    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
+<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
+<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+        <category>CTF-MISC</category>
+        <category>Common</category>
+      </categories>
+      <tags>
+        <tag>Misc</tag>
+      </tags>
+  </entry>
+  <entry>
     <title></title>
     <url>/2025/12/29/one/</url>
     <content><![CDATA[<hr>
@@ -213,34 +238,6 @@
 
 <p>请按 <code>Win + R</code> 打开运行框，输入 <code>cmd</code>，然后去 <code>/etc/hosts</code> 查看。</p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>Linux 基础</title>
-    <url>/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<p>在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳</p>
-<h2 id="系统启动-二进制文件"><a href="#系统启动-二进制文件" class="headerlink" title="系统启动&amp;二进制文件"></a>系统启动&amp;二进制文件</h2><p>&#x2F;bin<br>:用户可用 启动时会用到的命令 即使系统没有挂载 也能使用</p>
-<p>&#x2F;boot<br>:存放启动Linux系统所需的核心文件<br>内容:<br>Kernel              :通常以 vmlinuz 开头的文件<br>Initrd&#x2F;Initramfs    :初始化内存盘镜像<br>Bootloader          :如 GRUB 的配置文件(&#x2F;boot&#x2F;grub&#x2F;grub.cfg)<br><span style="color: red; font-weight: bold;">如删除了目录文件 系统将无法启动</span></p>
-<p>&#x2F;sbin<br>:存放root使用的系统管理目录<br>内容:<br>iptabk.reboot.fdisk.ifconfig</p>
-<p>&#x2F;lib &amp; lib64<br>:存放两者中二进制文件运行所需的共享库文件</p>
-<h2 id="配置文件与用户数据"><a href="#配置文件与用户数据" class="headerlink" title="配置文件与用户数据"></a>配置文件与用户数据</h2><p>&#x2F;etc<br>:系统主要的配置文件目录<br>&#x2F;etc&#x2F;passwd<br>:用户账号信息<br>&#x2F;etc&#x2F;shadow<br>:用户密码信息<br>&#x2F;etc&#x2F;fstab<br>:磁盘挂载配置<br>&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts<br>:网卡配置<br><span style="color: red; font-weight: bold;">禁止存放二进制可执行文件</span></p>
-<p>&#x2F;home<br>:普通用户的家目录</p>
-<p>&#x2F;root<br>:root家目录</p>
-<h2 id="可变数据-临时文件"><a href="#可变数据-临时文件" class="headerlink" title="可变数据 &amp;&amp; 临时文件"></a>可变数据 &amp;&amp; 临时文件</h2><p>&#x2F;var<br>:存放经常变化的数据<br>&#x2F;var&#x2F;log    :系统和软件日志文件(排错必看!!!)<br>&#x2F;var&#x2F;www    :存放于web服务器的网页文件<br>&#x2F;var&#x2F;lib    :数据库文件.mysql<br>&#x2F;var&#x2F;run    :存放当前运行进程的PID文件</p>
-<p>&#x2F;tmp<br>:存放各种临时文件</p>
-<h2 id="虚拟文件系统"><a href="#虚拟文件系统" class="headerlink" title="虚拟文件系统"></a>虚拟文件系统</h2><p>&#x2F;proc<br>:内核和进程信息的虚拟文件系统<br>&#x2F;proc&#x2F;cpuinfo<br>:CPU信息<br>&#x2F;proc&#x2F;meminfo<br>:内存使用情况<br>&#x2F;proc&#x2F;version<br>:内核版本<br>&#x2F;proc&#x2F;[PID]<br>:对应特定进程的详细信息</p>
-<h2 id="设备挂载"><a href="#设备挂载" class="headerlink" title="设备挂载"></a>设备挂载</h2><p>&#x2F;dev<br>:存放设备文件(硬件被映射为文件)<br>常见：<br>&#x2F;dev&#x2F;sda    :第一块物理硬盘<br>&#x2F;dev&#x2F;sr0    :光驱<br>&#x2F;dev&#x2F;tty    :终端设备<br>&#x2F;dev&#x2F;tty    :终端设备<br>&#x2F;dev&#x2F;null   :黑洞设备(丢弃一切写入的shuju)<br>&#x2F;dev&#x2F;zero   :零设备(可无限产生0数据)</p>
-<p>&#x2F;mut<br>:管理员临时挂载文件系统的目录</p>
-<p>&#x2F;media<br>&#x2F;media&#x2F;cdrom<br>&#x2F;media&#x2F;floppy<br>&#x2F;media&#x2F;u<br>:用于挂载本地磁盘或其他存储设备</p>
-<h2 id="三方软件与庞大的-usr"><a href="#三方软件与庞大的-usr" class="headerlink" title="三方软件与庞大的 &#x2F;usr"></a>三方软件与庞大的 &#x2F;usr</h2><p>&#x2F;usr<br>:Linux中最大的目录 存放随系统发行但不属于核心启动必须的应用程序和文件<br>&#x2F;usr&#x2F;bin<br>:大多数用户安装的应用程序<br>&#x2F;usr&#x2F;include<br>:标准包含头文件<br>&#x2F;usr&#x2F;lib<br>:&#x2F;usr&#x2F;bin&#x2F;和&#x2F;usr&#x2F;sbin&#x2F;中二进制文件的库<br>&#x2F;usr&#x2F;local<br>:管理员手动编译安装的软件<br>&#x2F;usr&#x2F;share<br>:共享数据<br>&#x2F;usr&#x2F;sbin<br>:非必要的系统二进制文件<br>&#x2F;usr&#x2F;src<br>:源代码 如内核源代码及其头文件</p>
-<p>&#x2F;opt<br>:用于安装大型的 自包含的第三方商业软件</p>
-]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux 知识点</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
   </entry>
   <entry>
     <title>Web安全实战：Docker 容器化部署 DVWA 靶场与 Burp Suite 暴力破解全流程</title>
@@ -314,36 +311,6 @@
       </tags>
   </entry>
   <entry>
-    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
-    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线</strong></em></p>
-</blockquote>
-<h2 id="开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户"><a href="#开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户"></a>开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)</p>
-<p>Remove anonymous users? [Y&#x2F;n] -&gt; Y</p>
-<p>Disallow root login remotely? [Y&#x2F;n] -&gt; Y</p>
-<p>Remove test database? [Y&#x2F;n] -&gt; Y</p>
-<p>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
-<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
-<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
-
-<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
-</code></pre>
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>我的第一篇技术博客</title>
     <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
     <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
@@ -353,6 +320,39 @@
       </categories>
       <tags>
         <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<blockquote>
+<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
+</blockquote>
+<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+
+<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
 </search>
