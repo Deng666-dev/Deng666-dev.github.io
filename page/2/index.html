@@ -248,7 +248,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-01 23:56:29" itemprop="dateModified" datetime="2026-01-01T23:56:29+08:00">2026-01-01</time>
+      <time title="Modified: 2026-01-02 16:32:42" itemprop="dateModified" datetime="2026-01-02T16:32:42+08:00">2026-01-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -289,21 +289,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
-
-<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
-<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1>
+          <p>搭建 Mysql 服务</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/#more" rel="contents">
+              <a class="btn" href="/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/">
                 Read more &raquo;
               </a>
             </div>

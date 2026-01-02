@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)  SSH 暴力破解防护### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本  12# 编辑配置文件sudo vim &#x2F;etc&#x2F;ssh&#x2F;sshd_config  1234## 修改内容Port 2222">
+    <meta name="description" content="对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 加固:对Ubuntu配置SSH与UFW">
 <meta property="og:url" content="http://example.com/2025/12/29/Linux-Ubuntu-ssh-ufw/index.html">
 <meta property="og:site_name" content="Vodka Blog">
-<meta property="og:description" content="对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)  SSH 暴力破解防护### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本  12# 编辑配置文件sudo vim &#x2F;etc&#x2F;ssh&#x2F;sshd_config  1234## 修改内容Port 2222">
+<meta property="og:description" content="对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png">
 <meta property="og:image" content="http://example.com/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://example.com/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png">
 <meta property="og:image" content="http://example.com/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png">
 <meta property="article:published_time" content="2025-12-29T12:48:14.000Z">
-<meta property="article:modified_time" content="2025-12-31T15:28:40.420Z">
+<meta property="article:modified_time" content="2026-01-02T08:33:18.306Z">
 <meta property="article:author" content="Vodka">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -239,7 +239,7 @@
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
       <meta itemprop="name" content="Linux 加固:对Ubuntu配置SSH与UFW | Vodka Blog">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content="对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -261,7 +261,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-12-31 23:28:40" itemprop="dateModified" datetime="2025-12-31T23:28:40+08:00">2025-12-31</time>
+      <time title="Modified: 2026-01-02 16:33:18" itemprop="dateModified" datetime="2026-01-02T16:33:18+08:00">2026-01-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -284,7 +284,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">Word count in article: </span>
-      <span>700</span>
+      <span>652</span>
     </span>
     <span class="post-meta-item" title="Reading time">
       <span class="post-meta-item-icon">
@@ -295,16 +295,14 @@
     </span>
 </div>
 
+            <div class="post-description">对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</div>
         </div>
       </header>
 
     
     
     
-    <div class="post-body" itemprop="articleBody"><blockquote>
-<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
-</blockquote>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+    <div class="post-body" itemprop="articleBody"><h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
 </code></pre>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
 

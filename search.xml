@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CTF-MISC-common</title>
+    <url>/2025/12/22/CTF-MISC/</url>
+    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
+<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
+<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+        <category>CTF-MISC</category>
+        <category>Common</category>
+      </categories>
+      <tags>
+        <tag>Misc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+
+<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>自动防御:用Fail2Ban封锁IP</title>
     <url>/2025/12/29/Fail2Ban-ip/</url>
     <content><![CDATA[<blockquote>
@@ -43,55 +89,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo-git-node.js</title>
-    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
-<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
-<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.butterfly.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
-<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>开发笔记</category>
-      </categories>
-      <tags>
-        <tag>hexo 搭建</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
-</blockquote>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-
-<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux.centos 搭建MySql8.x服务</title>
     <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
     <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
@@ -117,28 +114,9 @@
       </tags>
   </entry>
   <entry>
-    <title>CTF-MISC-common</title>
-    <url>/2025/12/22/CTF-MISC/</url>
-    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
-<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
-<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>CTF-MISC</category>
-        <category>Common</category>
-      </categories>
-      <tags>
-        <tag>Misc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux-samba</title>
     <url>/2025/12/24/Linux-samba/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>Linux中的Samba服务器是一个非常实用的技能，可以让你在Linux和Windows之间轻松共享文件以下提供两种方法</strong></em></p>
-</blockquote>
-<h1 id="网上-yum-源配置-用于本地网络环境"><a href="#网上-yum-源配置-用于本地网络环境" class="headerlink" title="网上 yum 源配置(用于本地网络环境)"></a>网上 yum 源配置(用于本地网络环境)</h1><h2 id="安装samba包"><a href="#安装samba包" class="headerlink" title="安装samba包"></a>安装samba包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 更新 yum 源</span></span><br><span class="line">  yum update -y</span><br><span class="line"><span class="comment"># 安装 samba 和 samba-client</span></span><br><span class="line">  yum install samba samba-client samba-common -y</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<h1 id="网上-yum-源配置-用于本地网络环境"><a href="#网上-yum-源配置-用于本地网络环境" class="headerlink" title="网上 yum 源配置(用于本地网络环境)"></a>网上 yum 源配置(用于本地网络环境)</h1><h2 id="安装samba包"><a href="#安装samba包" class="headerlink" title="安装samba包"></a>安装samba包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 更新 yum 源</span></span><br><span class="line">  yum update -y</span><br><span class="line"><span class="comment"># 安装 samba 和 samba-client</span></span><br><span class="line">  yum install samba samba-client samba-common -y</span><br></pre></td></tr></table></figure>
 
 <h2 id="创建目录设置权限"><a href="#创建目录设置权限" class="headerlink" title="创建目录设置权限"></a>创建目录设置权限</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建共享目录(便于主机访问)</span></span><br><span class="line">  <span class="built_in">mkdir</span> -p /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录权限</span></span><br><span class="line">  <span class="built_in">chmod</span> -R 777 /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录所有者</span></span><br><span class="line">  <span class="built_in">chown</span> -R nobody:nobody /srv/samba/share</span><br></pre></td></tr></table></figure>
 
@@ -205,6 +183,22 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo-git-node.js</title>
+    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
+<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.butterfly.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
+<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>开发笔记</category>
+      </categories>
+      <tags>
+        <tag>hexo 搭建</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>kali knowledge points</title>
     <url>/2025/12/22/kali%20knowledge%20points/</url>
     <content><![CDATA[<h1 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h1><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
@@ -222,33 +216,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/2025/12/29/one/</url>
-    <content><![CDATA[<hr>
-<h2 id="title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记"><a href="#title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记" class="headerlink" title="title: 123date: 2025-12-29 21:01:24tags: 开发categories: 开发笔记"></a>title: 123<br>date: 2025-12-29 21:01:24<br>tags: 开发<br>categories: 开发笔记</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">你的代码内容</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 Samba 服务</span></span><br><span class="line">yum install samba samba-client -y</span><br><span class="line">systemctl start smb</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">inject:123</span></span><br><span class="line"><span class="string">head:345</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&lt;style&gt;...&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">workgroup</span> = WORKGROUP</span><br><span class="line"><span class="attr">security</span> = user</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Vodka is Pro&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><figcaption><span>/etc/samba/smb.conf</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="section">[Share]</span></span><br><span class="line"><span class="attr">comment</span> = My Share</span><br><span class="line"><span class="attr">path</span> = /srv/samba</span><br><span class="line"><span class="attr">writable</span> = <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">    # 修改 _config.butterfly.yml</span><br><span class="line">    inject:</span><br><span class="line">    head:</span><br><span class="line"><span class="deletion">-       - &lt;style&gt;错误的代码&lt;/style&gt;</span></span><br><span class="line"><span class="addition">+       - &lt;style&gt;正确的代码&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>请按 <code>Win + R</code> 打开运行框，输入 <code>cmd</code>，然后去 <code>/etc/hosts</code> 查看。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
     <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线</strong></em></p>
-</blockquote>
-<h2 id="开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户"><a href="#开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户"></a>开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<h2 id="开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户"><a href="#开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户"></a>开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
 <p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)</p>
 <p>Remove anonymous users? [Y&#x2F;n] -&gt; Y</p>
 <p>Disallow root login remotely? [Y&#x2F;n] -&gt; Y</p>
@@ -342,6 +312,27 @@
       <tags>
         <tag>Linux</tag>
       </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2025/12/29/one/</url>
+    <content><![CDATA[<hr>
+<h2 id="title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记"><a href="#title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记" class="headerlink" title="title: 123date: 2025-12-29 21:01:24tags: 开发categories: [开发笔记]"></a>title: 123<br>date: 2025-12-29 21:01:24<br>tags: 开发<br>categories: [开发笔记]</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">你的代码内容</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 Samba 服务</span></span><br><span class="line">yum install samba samba-client -y</span><br><span class="line">systemctl start smb</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">inject:123</span></span><br><span class="line"><span class="string">head:345</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&lt;style&gt;...&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">workgroup</span> = WORKGROUP</span><br><span class="line"><span class="attr">security</span> = user</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Vodka is Pro&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><figcaption><span>/etc/samba/smb.conf</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="section">[Share]</span></span><br><span class="line"><span class="attr">comment</span> = My Share</span><br><span class="line"><span class="attr">path</span> = /srv/samba</span><br><span class="line"><span class="attr">writable</span> = <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">    # 修改 _config.butterfly.yml</span><br><span class="line">    inject:</span><br><span class="line">    head:</span><br><span class="line"><span class="deletion">-       - &lt;style&gt;错误的代码&lt;/style&gt;</span></span><br><span class="line"><span class="addition">+       - &lt;style&gt;正确的代码&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>请按 <code>Win + R</code> 打开运行框，输入 <code>cmd</code>，然后去 <code>/etc/hosts</code> 查看。</p>
+]]></content>
   </entry>
   <entry>
     <title>我的第一篇技术博客</title>
