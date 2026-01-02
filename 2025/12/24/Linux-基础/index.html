@@ -1,25 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
-  <link rel="mask-icon" href="/images/favicon.png" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
-
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="description" content="Linux 文件系统配置">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 基础">
@@ -32,286 +18,165 @@
 <meta property="article:author" content="Vodka">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/","path":"2025/12/24/Linux-基础/","title":"Linux 基础"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Linux 基础 | Vodka Blog</title>
-  
-
-
-
-
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
-<script src="/js/third-party/search/local-search.js" defer></script>
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Vodka Blog</p>
-      <i class="logo-line"></i>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="Searching..." spellcheck="false"
-                type="search" class="search-input">
-        </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</header>
+    
+    
+      
         
-  
-  <aside class="sidebar">
+          <link rel="shortcut icon" href="/images/avatar.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/avatar.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+        
+      
+    
+    <!-- title -->
+    <title>Linux 基础</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Deng666-dev">Projects</a></li><!--
+     -->
       </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">系统启动&amp;二进制文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8E%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE"><span class="nav-number">2.</span> <span class="nav-text">配置文件与用户数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E5%8F%98%E6%95%B0%E6%8D%AE-%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">可变数据 &amp;&amp; 临时文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.</span> <span class="nav-text">虚拟文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E6%8C%82%E8%BD%BD"><span class="nav-number">5.</span> <span class="nav-text">设备挂载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6%E4%B8%8E%E5%BA%9E%E5%A4%A7%E7%9A%84-usr"><span class="nav-number">6.</span> <span class="nav-text">三方软件与庞大的 &#x2F;usr</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Vodka"
-      src="/img/touxiang.png">
-  <p class="site-author-name" itemprop="name">Vodka</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">11</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">5</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/Deng666-dev" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Deng666-dev" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:eduaimonia.yg@gmail.com" title="E-Mail → mailto:eduaimonia.yg@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-  </div>
-
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="sidebar-inner sidebar-blogroll">
-      <div class="links-of-blogroll animated">
-        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
-          Links
-        </div>
-        <ul class="links-of-blogroll-list">
-            <li class="links-of-blogroll-item">
-              <a href="https://hexo.io/" title="https:&#x2F;&#x2F;hexo.io&#x2F;" rel="noopener" target="_blank">Hexo官网</a>
-            </li>
-            <li class="links-of-blogroll-item">
-              <a href="https://www.leavesongs.com/" title="https:&#x2F;&#x2F;www.leavesongs.com&#x2F;" rel="noopener" target="_blank">离别歌</a>
-            </li>
-        </ul>
-      </div>
-    </div>
-  </aside>
-
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2025/12/29/Linux-Ubuntu-ssh-ufw/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/12/24/Linux-samba/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&text=Linux 基础"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&is_video=false&description=Linux 基础"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Linux 基础&body=Check out this article: http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&name=Linux 基础&description=&lt;p&gt;在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳&lt;/p&gt;
+&lt;h2 id=&#34;系统启动-二进制文件&#34;&gt;&lt;a href=&#34;#系统启动-二进制文件&#34; class=&#34;headerlink&#34; title=&#34;系统启动&amp;amp;二进制文件&#34;&gt;&lt;/a&gt;系统启动&amp;amp;二进制文件&lt;/h2&gt;&lt;p&gt;&amp;#x2F;bin&lt;br&gt;:用户可用 启动时会用到的命令 即使系统没有挂载 也能使用&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;boot&lt;br&gt;:存放启动Linux系统所需的核心文件&lt;br&gt;内容:&lt;br&gt;Kernel              :通常以 vmlinuz 开头的文件&lt;br&gt;Initrd&amp;#x2F;Initramfs    :初始化内存盘镜像&lt;br&gt;Bootloader          :如 GRUB 的配置文件(&amp;#x2F;boot&amp;#x2F;grub&amp;#x2F;grub.cfg)&lt;br&gt;&lt;span style=&#34;color: red; font-weight: bold;&#34;&gt;如删除了目录文件 系统将无法启动&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;sbin&lt;br&gt;:存放root使用的系统管理目录&lt;br&gt;内容:&lt;br&gt;iptabk.reboot.fdisk.ifconfig&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;lib &amp;amp; lib64&lt;br&gt;:存放两者中二进制文件运行所需的共享库文件&lt;/p&gt;
+&lt;h2 id=&#34;配置文件与用户数据&#34;&gt;&lt;a href=&#34;#配置文件与用户数据&#34; class=&#34;headerlink&#34; title=&#34;配置文件与用户数据&#34;&gt;&lt;/a&gt;配置文件与用户数据&lt;/h2&gt;&lt;p&gt;&amp;#x2F;etc&lt;br&gt;:系统主要的配置文件目录&lt;br&gt;&amp;#x2F;etc&amp;#x2F;passwd&lt;br&gt;:用户账号信息&lt;br&gt;&amp;#x2F;etc&amp;#x2F;shadow&lt;br&gt;:用户密码信息&lt;br&gt;&amp;#x2F;etc&amp;#x2F;fstab&lt;br&gt;:磁盘挂载配置&lt;br&gt;&amp;#x2F;etc&amp;#x2F;sysconfig&amp;#x2F;network-scripts&lt;br&gt;:网卡配置&lt;br&gt;&lt;span style=&#34;color: red; font-weight: bold;&#34;&gt;禁止存放二进制可执行文件&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;home&lt;br&gt;:普通用户的家目录&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;root&lt;br&gt;:root家目录&lt;/p&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&t=Linux 基础"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
 
     </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/img/touxiang.png">
-      <meta itemprop="name" content="Vodka">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vodka Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Linux 基础 | Vodka Blog">
-      <meta itemprop="description" content="Linux 文件系统配置">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Linux 基础
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2025-12-24 09:30:13" itemprop="dateCreated datePublished" datetime="2025-12-24T09:30:13+08:00">2025-12-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-01-02 16:32:00" itemprop="dateModified" datetime="2026-01-02T16:32:00+08:00">2026-01-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux-%E8%BF%90%E7%BB%B4/" itemprop="url" rel="index"><span itemprop="name">Linux 运维</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux-%E8%BF%90%E7%BB%B4/Linux-%E7%9F%A5%E8%AF%86%E7%82%B9/" itemprop="url" rel="index"><span itemprop="name">Linux 知识点</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="Word count in article">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">Word count in article: </span>
-      <span>1.6k</span>
-    </span>
-    <span class="post-meta-item" title="Reading time">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">Reading time &asymp;</span>
-      <span>1 mins.</span>
-    </span>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">系统启动&amp;二进制文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8E%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE"><span class="toc-number">2.</span> <span class="toc-text">配置文件与用户数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E6%95%B0%E6%8D%AE-%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">可变数据 &amp;&amp; 临时文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">虚拟文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%8C%82%E8%BD%BD"><span class="toc-number">5.</span> <span class="toc-text">设备挂载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6%E4%B8%8E%E5%BA%9E%E5%A4%A7%E7%9A%84-usr"><span class="toc-number">6.</span> <span class="toc-text">三方软件与庞大的 &#x2F;usr</span></a></li></ol>
+      </div>
+    
+  </span>
 </div>
 
-            <div class="post-description">Linux 文件系统配置</div>
-        </div>
-      </header>
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Linux 基础
+    </h1>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳</p>
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Vodka</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-12-24T01:30:13.000Z" class="dt-published" itemprop="datePublished">2025-12-24</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Linux-%E8%BF%90%E7%BB%B4/">Linux 运维</a> › <a class="category-link" href="/categories/Linux-%E8%BF%90%E7%BB%B4/Linux-%E7%9F%A5%E8%AF%86%E7%82%B9/">Linux 知识点</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Linux/" rel="tag">Linux</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳</p>
 <h2 id="系统启动-二进制文件"><a href="#系统启动-二进制文件" class="headerlink" title="系统启动&amp;二进制文件"></a>系统启动&amp;二进制文件</h2><p>&#x2F;bin<br>:用户可用 启动时会用到的命令 即使系统没有挂载 也能使用</p>
 <p>&#x2F;boot<br>:存放启动Linux系统所需的核心文件<br>内容:<br>Kernel              :通常以 vmlinuz 开头的文件<br>Initrd&#x2F;Initramfs    :初始化内存盘镜像<br>Bootloader          :如 GRUB 的配置文件(&#x2F;boot&#x2F;grub&#x2F;grub.cfg)<br><span style="color: red; font-weight: bold;">如删除了目录文件 系统将无法启动</span></p>
 <p>&#x2F;sbin<br>:存放root使用的系统管理目录<br>内容:<br>iptabk.reboot.fdisk.ifconfig</p>
@@ -328,104 +193,158 @@
 <h2 id="三方软件与庞大的-usr"><a href="#三方软件与庞大的-usr" class="headerlink" title="三方软件与庞大的 &#x2F;usr"></a>三方软件与庞大的 &#x2F;usr</h2><p>&#x2F;usr<br>:Linux中最大的目录 存放随系统发行但不属于核心启动必须的应用程序和文件<br>&#x2F;usr&#x2F;bin<br>:大多数用户安装的应用程序<br>&#x2F;usr&#x2F;include<br>:标准包含头文件<br>&#x2F;usr&#x2F;lib<br>:&#x2F;usr&#x2F;bin&#x2F;和&#x2F;usr&#x2F;sbin&#x2F;中二进制文件的库<br>&#x2F;usr&#x2F;local<br>:管理员手动编译安装的软件<br>&#x2F;usr&#x2F;share<br>:共享数据<br>&#x2F;usr&#x2F;sbin<br>:非必要的系统二进制文件<br>&#x2F;usr&#x2F;src<br>:源代码 如内核源代码及其头文件</p>
 <p>&#x2F;opt<br>:用于安装大型的 自包含的第三方商业软件</p>
 
-    </div>
+  </div>
+</article>
 
-    
-    
-    
 
-    <footer class="post-footer">
-          
-
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>Post author:  </strong>Vodka
-  </li>
-  <li class="post-copyright-link">
-      <strong>Post link: </strong>
-      <a href="http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/" title="Linux 基础">http://example.com/2025/12/24/Linux-基础/</a>
-  </li>
-  <li class="post-copyright-license">
-      <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"># Linux</a>
-          </div>
 
         
+          <div id="footer-post-container">
+  <div id="footer-post">
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/12/24/Linux-samba/" rel="prev" title="Linux-samba">
-                  <i class="fa fa-angle-left"></i> Linux-samba
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/12/29/Linux-Ubuntu-ssh-ufw/" rel="next" title="Linux 加固:对Ubuntu配置SSH与UFW">
-                  Linux 加固:对Ubuntu配置SSH与UFW <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/categories/">categories</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/Deng666-dev">Projects</a></li>
+        
+      </ul>
+    </div>
 
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">系统启动&amp;二进制文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8E%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE"><span class="toc-number">2.</span> <span class="toc-text">配置文件与用户数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%AF%E5%8F%98%E6%95%B0%E6%8D%AE-%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">可变数据 &amp;&amp; 临时文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">4.</span> <span class="toc-text">虚拟文件系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E6%8C%82%E8%BD%BD"><span class="toc-number">5.</span> <span class="toc-text">设备挂载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E6%96%B9%E8%BD%AF%E4%BB%B6%E4%B8%8E%E5%BA%9E%E5%A4%A7%E7%9A%84-usr"><span class="toc-number">6.</span> <span class="toc-text">三方软件与庞大的 &#x2F;usr</span></a></li></ol>
+      </div>
+    
 
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 2025 – 
-    <span itemprop="copyrightYear">2026</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">Vodka</span>
-  </div>
-<div class="wordcount">
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-chart-line"></i>
-    </span>
-    <span title="Word count total">13k</span>
-  </span>
-  <span class="post-meta-item">
-    <span class="post-meta-item-icon">
-      <i class="fa fa-coffee"></i>
-    </span>
-    <span title="Reading time total">12 mins.</span>
-  </span>
-</div>
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&text=Linux 基础"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&is_video=false&description=Linux 基础"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Linux 基础&body=Check out this article: http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&title=Linux 基础"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&name=Linux 基础&description=&lt;p&gt;在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳&lt;/p&gt;
+&lt;h2 id=&#34;系统启动-二进制文件&#34;&gt;&lt;a href=&#34;#系统启动-二进制文件&#34; class=&#34;headerlink&#34; title=&#34;系统启动&amp;amp;二进制文件&#34;&gt;&lt;/a&gt;系统启动&amp;amp;二进制文件&lt;/h2&gt;&lt;p&gt;&amp;#x2F;bin&lt;br&gt;:用户可用 启动时会用到的命令 即使系统没有挂载 也能使用&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;boot&lt;br&gt;:存放启动Linux系统所需的核心文件&lt;br&gt;内容:&lt;br&gt;Kernel              :通常以 vmlinuz 开头的文件&lt;br&gt;Initrd&amp;#x2F;Initramfs    :初始化内存盘镜像&lt;br&gt;Bootloader          :如 GRUB 的配置文件(&amp;#x2F;boot&amp;#x2F;grub&amp;#x2F;grub.cfg)&lt;br&gt;&lt;span style=&#34;color: red; font-weight: bold;&#34;&gt;如删除了目录文件 系统将无法启动&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;sbin&lt;br&gt;:存放root使用的系统管理目录&lt;br&gt;内容:&lt;br&gt;iptabk.reboot.fdisk.ifconfig&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;lib &amp;amp; lib64&lt;br&gt;:存放两者中二进制文件运行所需的共享库文件&lt;/p&gt;
+&lt;h2 id=&#34;配置文件与用户数据&#34;&gt;&lt;a href=&#34;#配置文件与用户数据&#34; class=&#34;headerlink&#34; title=&#34;配置文件与用户数据&#34;&gt;&lt;/a&gt;配置文件与用户数据&lt;/h2&gt;&lt;p&gt;&amp;#x2F;etc&lt;br&gt;:系统主要的配置文件目录&lt;br&gt;&amp;#x2F;etc&amp;#x2F;passwd&lt;br&gt;:用户账号信息&lt;br&gt;&amp;#x2F;etc&amp;#x2F;shadow&lt;br&gt;:用户密码信息&lt;br&gt;&amp;#x2F;etc&amp;#x2F;fstab&lt;br&gt;:磁盘挂载配置&lt;br&gt;&amp;#x2F;etc&amp;#x2F;sysconfig&amp;#x2F;network-scripts&lt;br&gt;:网卡配置&lt;br&gt;&lt;span style=&#34;color: red; font-weight: bold;&#34;&gt;禁止存放二进制可执行文件&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;home&lt;br&gt;:普通用户的家目录&lt;/p&gt;
+&lt;p&gt;&amp;#x2F;root&lt;br&gt;:root家目录&lt;/p&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/&t=Linux 基础"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
 
     </div>
-  </footer>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Vodka
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/Deng666-dev">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
 
 </body>
 </html>
