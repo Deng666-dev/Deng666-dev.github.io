@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>自动防御:用Fail2Ban封锁IP</title>
+    <url>/2025/12/29/Fail2Ban-ip/</url>
+    <content><![CDATA[<blockquote>
+<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
+</blockquote>
+<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><img src="/2025/12/29/Fail2Ban-ip/1.png" class="" title="可以看见有不明ip尝试破解">
+
+<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+
+<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+
+<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+
+<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
+
+<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
+
+<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
+<p>解封后可以看见物理机正常连接:</p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo-git-node.js</title>
     <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
@@ -14,6 +56,80 @@
       </categories>
       <tags>
         <tag>hexo 搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<blockquote>
+<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
+</blockquote>
+<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+
+<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux.centos 搭建MySql8.x服务</title>
+    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
+
+<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
+<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
+
+<h1 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux server</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTF-MISC-common</title>
+    <url>/2025/12/22/CTF-MISC/</url>
+    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
+<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
+<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+        <category>CTF-MISC</category>
+        <category>Common</category>
+      </categories>
+      <tags>
+        <tag>Misc</tag>
       </tags>
   </entry>
   <entry>
@@ -52,31 +168,6 @@
 <p>wget命令:非交互式网络下载工具,可在后台运行<br>wget 【选项】【参数】<br>常用用法是命令后面直接跟软件包地址<br>-P指定下载目录<br>-O 指定保存文件名<br>-c 断点续传<br>-b 后台下载</p>
 <p>curl命令:传输数据(文件上传下载、表单提交、cookie处理)<br>curl【选项】【参数】<br>-o 将输出保存到文件<br>-O 使用远程文件名<br>-s保存静默模式（不显示进度）<br>-v显示详细通信过程</p>
 ]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux server</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux.centos 搭建MySql8.x服务</title>
-    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
-    <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
-
-<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
-<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
-
-<h1 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux server</category>
@@ -131,46 +222,25 @@
       </tags>
   </entry>
   <entry>
-    <title>自动防御:用Fail2Ban封锁IP</title>
-    <url>/2025/12/29/Fail2Ban-ip/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
-</blockquote>
-<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><img src="/2025/12/29/Fail2Ban-ip/1.png" class="" title="可以看见有不明ip尝试破解">
+    <title></title>
+    <url>/2025/12/29/one/</url>
+    <content><![CDATA[<hr>
+<h2 id="title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记"><a href="#title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记" class="headerlink" title="title: 123date: 2025-12-29 21:01:24tags: 开发categories: 开发笔记"></a>title: 123<br>date: 2025-12-29 21:01:24<br>tags: 开发<br>categories: 开发笔记</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">你的代码内容</span><br></pre></td></tr></table></figure>
 
-<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 Samba 服务</span></span><br><span class="line">yum install samba samba-client -y</span><br><span class="line">systemctl start smb</span><br></pre></td></tr></table></figure>
 
-<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">inject:123</span></span><br><span class="line"><span class="string">head:345</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&lt;style&gt;...&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
 
-<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">workgroup</span> = WORKGROUP</span><br><span class="line"><span class="attr">security</span> = user</span><br></pre></td></tr></table></figure>
 
-<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Vodka is Pro&quot;</span>)</span><br></pre></td></tr></table></figure>
 
-<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+<figure class="highlight ini"><figcaption><span>/etc/samba/smb.conf</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="section">[Share]</span></span><br><span class="line"><span class="attr">comment</span> = My Share</span><br><span class="line"><span class="attr">path</span> = /srv/samba</span><br><span class="line"><span class="attr">writable</span> = <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+<figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">    # 修改 _config.butterfly.yml</span><br><span class="line">    inject:</span><br><span class="line">    head:</span><br><span class="line"><span class="deletion">-       - &lt;style&gt;错误的代码&lt;/style&gt;</span></span><br><span class="line"><span class="addition">+       - &lt;style&gt;正确的代码&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
-
-<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
-
-<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
-<p>解封后可以看见物理机正常连接:</p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
+<p>请按 <code>Win + R</code> 打开运行框，输入 <code>cmd</code>，然后去 <code>/etc/hosts</code> 查看。</p>
+]]></content>
   </entry>
   <entry>
     <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
@@ -201,43 +271,6 @@
       <tags>
         <tag>Linux</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>CTF-MISC-common</title>
-    <url>/2025/12/22/CTF-MISC/</url>
-    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
-<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
-<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>CTF-MISC</category>
-        <category>Common</category>
-      </categories>
-      <tags>
-        <tag>Misc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title></title>
-    <url>/2025/12/29/one/</url>
-    <content><![CDATA[<hr>
-<h2 id="title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记"><a href="#title-123date-2025-12-29-21-01-24tags-开发categories-开发笔记" class="headerlink" title="title: 123date: 2025-12-29 21:01:24tags: 开发categories: 开发笔记"></a>title: 123<br>date: 2025-12-29 21:01:24<br>tags: 开发<br>categories: 开发笔记</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line">你的代码内容</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 Samba 服务</span></span><br><span class="line">yum install samba samba-client -y</span><br><span class="line">systemctl start smb</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">inject:123</span></span><br><span class="line"><span class="string">head:345</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&lt;style&gt;...&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">workgroup</span> = WORKGROUP</span><br><span class="line"><span class="attr">security</span> = user</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Vodka is Pro&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><figcaption><span>/etc/samba/smb.conf</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="section">[Share]</span></span><br><span class="line"><span class="attr">comment</span> = My Share</span><br><span class="line"><span class="attr">path</span> = /srv/samba</span><br><span class="line"><span class="attr">writable</span> = <span class="literal">yes</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">    # 修改 _config.butterfly.yml</span><br><span class="line">    inject:</span><br><span class="line">    head:</span><br><span class="line"><span class="deletion">-       - &lt;style&gt;错误的代码&lt;/style&gt;</span></span><br><span class="line"><span class="addition">+       - &lt;style&gt;正确的代码&lt;/style&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>请按 <code>Win + R</code> 打开运行框，输入 <code>cmd</code>，然后去 <code>/etc/hosts</code> 查看。</p>
-]]></content>
   </entry>
   <entry>
     <title>Web安全实战：Docker 容器化部署 DVWA 靶场与 Burp Suite 暴力破解全流程</title>
@@ -320,39 +353,6 @@
       </categories>
       <tags>
         <tag>随笔</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</strong></em></p>
-</blockquote>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-
-<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
       </tags>
   </entry>
 </search>
