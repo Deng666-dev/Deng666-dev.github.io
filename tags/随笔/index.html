@@ -55,6 +55,58 @@
 	
 <meta name="generator" content="Hexo 7.3.0"></head>
 
+<div id="rocket-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+    <svg t="1704290000000" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4286" width="32" height="32"><path d="M885.333333 486.4c-12.8-12.8-34.133333-12.8-46.933333 0L554.666667 768V128c0-19.2-14.933333-34.133333-34.133334-34.133333h-17.066666c-19.2 0-34.133333 14.933333-34.133334 34.133333v640L185.6 486.4c-12.8-12.8-34.133333-12.8-46.933333 0-12.8 12.8-12.8 34.133333 0 46.933333l341.333333 341.333334c6.4 6.4 14.933333 8.533333 23.466667 8.533333 8.533333 0 17.066667-4.266667 23.466666-8.533333l341.333334-341.333334c12.8-12.8 12.8-34.133333 0-46.933333z" fill="#ffffff" p-id="4287" transform="rotate(180, 512, 512)"></path></svg>
+</div>
+
+<style>
+#rocket-to-top {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 50px; /* 按钮大小 */
+    height: 50px;
+    background: #2bbc8a; /* 主题绿背景 */
+    border-radius: 50%; /* 圆形 */
+    box-shadow: 0 4px 10px rgba(43, 188, 138, 0.4); /* 绿色阴影 */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0; /* 默认透明 */
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(20px); /* 默认向下藏一点 */
+}
+
+/* 激活状态：显示并浮上来 */
+#rocket-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 悬停状态：起飞效果 */
+#rocket-to-top:hover {
+    background: #249e73; /* 深一点的绿色 */
+    transform: translateY(-5px); /* 向上浮动 */
+    box-shadow: 0 6px 15px rgba(43, 188, 138, 0.6);
+}
+</style>
+
+<script>
+// 监听滚动事件，控制火箭显示
+window.addEventListener('scroll', function() {
+    var rocket = document.getElementById("rocket-to-top");
+    // 滚动超过 300 像素显示
+    if (window.scrollY > 300) {
+        rocket.classList.add("show");
+    } else {
+        rocket.classList.remove("show");
+    }
+});
+</script>
 <body class="max-width mx-auto px3 ltr">
     
     <div class="content index py4 ">
@@ -86,7 +138,7 @@
    --><!--
      --><li><a href="/tags/">tags</a></li><!--
    --><!--
-     --><li><a target="_blank" rel="noopener" href="https://github.com/Deng666-dev">Projects</a></li><!--
+     --><li><a href="/projects/">Projects</a></li><!--
    -->
     </ul>
   </div>
@@ -153,13 +205,12 @@
      --><!--
        --><li><a href="/tags/">tags</a></li><!--
      --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/Deng666-dev">Projects</a></li><!--
+       --><li><a href="/projects/">Projects</a></li><!--
      -->
       </ul>
     </nav>
   </div>
-</footer>
-
+  
     </div>
     <!-- styles -->
 

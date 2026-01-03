@@ -1,3 +1,18 @@
+body {
+/* 方案A: 纯色护眼模式（推荐，更有极客感） */
+  background-color: #f4f4f0;
+/* 方案B: 如果你一定要图片，把图片放在 source/images/bg.jpg */
+/* background-image: url('../images/bg.jpg'); */
+/* background-repeat: repeat; */
+/* background-attachment: fixed; */
+}
+/* 让文章容器稍微白一点，形成层次感 */
+.post-content,
+#content {
+  background: rgba(255,255,255,0.6); /* 半透明白色 */
+  padding: 20px;
+  border-radius: 8px;
+}
 .inline {
   display: inline;
 }
@@ -321,7 +336,7 @@ body .h1 {
   display: block;
   margin-top: 3rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: #d44375;
   letter-spacing: 0.01em;
   font-weight: 700;
   font-style: normal;
@@ -335,14 +350,14 @@ body .h2 {
   display: block;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: #111;
   text-transform: none;
   letter-spacing: normal;
   font-weight: bold;
   font-size: 1rem;
 }
 body h3 {
-  color: #333;
+  color: #111;
   text-decoration: underline;
   font-weight: bold;
   font-size: 0.9rem;
@@ -352,7 +367,7 @@ body h5,
 body h6 {
   display: inline;
   text-decoration: none;
-  color: #333;
+  color: #666;
   font-weight: bold;
   font-size: 0.9rem;
 }
@@ -364,7 +379,7 @@ body h6 {
   margin-bottom: 0.5rem;
 }
 body hr {
-  border: 0.5px dashed #333;
+  border: 0.5px dashed #666;
   opacity: 0.5;
   margin: 0;
   margin-top: 20px;
@@ -426,7 +441,7 @@ body table {
 body th {
   padding: 8px;
   border-bottom: 1px dashed #666;
-  color: #333;
+  color: #111;
   font-weight: bold;
   font-size: 13px;
 }
@@ -447,7 +462,7 @@ body td {
 /* Scroll bar */
 /* For Firefox */
 * {
-  scrollbar-color: #aaa transparent;
+  scrollbar-color: #999 transparent;
 }
 /* For Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
@@ -458,28 +473,28 @@ body td {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background-color: #aaa;
+  background-color: #999;
   border-radius: 6px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #888;
+  background-color: #7a7a7a;
 }
 *::-webkit-scrollbar-thumb:active {
-  background-color: #777;
+  background-color: #6b6b6b;
 }
 html {
   margin: 0;
   padding: 0;
   height: 100%;
-  border-top: 2px solid #383838;
+  border-top: 2px solid #363533;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
 body {
   margin: 0;
   height: 100%;
-  background-color: #fff;
-  color: #383838;
+  background-color: #e2e0de;
+  color: #363533;
   font-weight: 400;
   font-size: 14px;
   font-family: "Menlo", "Meslo LG", monospace;
@@ -508,21 +523,21 @@ body {
   -webkit-hyphens: manual;
 }
 .content a {
-  color: #383838;
+  color: #363533;
   text-decoration: none;
-  background-image: linear-gradient(transparent, transparent 5px, #383838 5px, #383838);
+  background-image: linear-gradient(transparent, transparent 5px, #363533 5px, #363533);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
 }
 .content a:hover {
-  background-image: linear-gradient(transparent, transparent 4px, #d480aa 4px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 4px, #2bbc8a 4px, #2bbc8a);
 }
 .content a.icon {
   background: none;
 }
 .content a.icon:hover {
-  color: #d480aa;
+  color: #2bbc8a;
 }
 .content h1 a,
 .content .h1 a,
@@ -542,7 +557,7 @@ body {
 .content h4 a:hover,
 .content h5 a:hover,
 .content h6 a:hover {
-  background-image: linear-gradient(transparent, transparent 6px, #d480aa 6px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 6px, #2bbc8a 6px, #2bbc8a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -553,7 +568,7 @@ body {
   text-decoration: none;
 }
 .content h6 a:hover {
-  background-image: linear-gradient(transparent, transparent 6px, #d480aa 6px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 6px, #2bbc8a 6px, #2bbc8a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -597,7 +612,7 @@ body {
 #header .h1 {
   margin-top: 0;
   margin-bottom: 0;
-  color: #383838;
+  color: #363533;
   letter-spacing: 0.01em;
   font-weight: 700;
   font-style: normal;
@@ -622,7 +637,7 @@ body {
   background-repeat: no-repeat;
 }
 #header #nav {
-  color: #333;
+  color: #d44375;
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
@@ -636,10 +651,10 @@ body {
 }
 #header #nav ul a {
   margin-right: 15px;
-  color: #333;
+  color: #d44375;
 }
 #header #nav ul a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
+  background-image: linear-gradient(transparent, transparent 5px, #d44375 5px, #d44375);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -648,7 +663,7 @@ body {
   display: inline-block;
   margin-right: 15px;
   border-right: 1px dotted;
-  border-color: #333;
+  border-color: #d44375;
   vertical-align: middle;
 }
 #header #nav ul .icon {
@@ -716,7 +731,7 @@ body {
   background: none;
 }
 #header-post a.icon:hover {
-  color: #d480aa;
+  color: #2bbc8a;
 }
 #header-post ol {
   list-style-type: none;
@@ -741,7 +756,7 @@ body {
   margin-left: 15px;
 }
 #header-post #menu-icon:hover {
-  color: #333;
+  color: #d44375;
 }
 #header-post #menu-icon-tablet {
   float: right;
@@ -749,7 +764,7 @@ body {
   margin-left: 15px;
 }
 #header-post #menu-icon-tablet:hover {
-  color: #333;
+  color: #d44375;
 }
 #header-post #top-icon-tablet {
   position: fixed;
@@ -759,17 +774,17 @@ body {
   margin-left: 15px;
 }
 #header-post #top-icon-tablet:hover {
-  color: #333;
+  color: #d44375;
 }
 #header-post .active {
-  color: #333;
+  color: #d44375;
 }
 #header-post #menu {
   display: none;
   margin-right: 2rem;
 }
 #header-post #nav {
-  color: #333;
+  color: #d44375;
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
@@ -780,16 +795,16 @@ body {
 }
 #header-post #nav ul a {
   margin-right: 15px;
-  color: #333;
+  color: #d44375;
 }
 #header-post #nav ul a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
+  background-image: linear-gradient(transparent, transparent 5px, #d44375 5px, #d44375);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
 }
 #header-post #nav ul li {
-  border-right: 1px dotted #333;
+  border-right: 1px dotted #d44375;
 }
 #header-post #nav ul li:last-child {
   margin-right: 0;
@@ -833,17 +848,17 @@ body {
   text-align: right;
 }
 #header-post #toc a:hover {
-  color: #d480aa;
+  color: #2bbc8a;
 }
 #header-post #toc .toc-level-1 > .toc-link {
   display: none;
 }
 #header-post #toc .toc-level-2 {
-  color: #383838;
+  color: #363533;
   font-size: 0.8rem;
 }
 #header-post #toc .toc-level-2:before {
-  color: #333;
+  color: #d44375;
   content: "#";
 }
 #header-post #toc .toc-level-3 {
@@ -920,7 +935,7 @@ body {
   z-index: 5000000;
   width: 100%;
   border-top: 1px solid #666;
-  background: #fafafa;
+  background: #dedcd9;
   transition: opacity 0.2s;
 }
 #footer-post a {
@@ -932,20 +947,20 @@ body {
   background: none;
 }
 #footer-post a.icon:hover {
-  color: #d480aa;
+  color: #2bbc8a;
 }
 #footer-post #nav-footer {
   padding-right: 1rem;
   padding-left: 1rem;
-  background: #e6e6e6;
+  background: #cdcac6;
   text-align: center;
 }
 #footer-post #nav-footer a {
-  color: #333;
+  color: #d44375;
   font-size: 1em;
 }
 #footer-post #nav-footer a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
+  background-image: linear-gradient(transparent, transparent 5px, #d44375 5px, #d44375);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -976,12 +991,12 @@ body {
 #footer-post #actions-footer a {
   display: inline-block;
   padding-left: 1rem;
-  color: #333;
+  color: #d44375;
 }
 #footer-post #share-footer {
   padding-right: 1rem;
   padding-left: 1rem;
-  background: #e6e6e6;
+  background: #cdcac6;
   text-align: center;
 }
 #footer-post #share-footer ul {
@@ -1001,7 +1016,7 @@ body {
   clear: both;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background: #e6e6e6;
+  background: #cdcac6;
   text-align: left;
 }
 #footer-post #toc-footer ol {
@@ -1013,17 +1028,17 @@ body {
   line-height: 30px;
 }
 #footer-post #toc-footer a:hover {
-  color: #d480aa;
+  color: #2bbc8a;
 }
 #footer-post #toc-footer .toc-level-1 > .toc-link {
   display: none;
 }
 #footer-post #toc-footer .toc-level-2 {
-  color: #383838;
+  color: #363533;
   font-size: 0.8rem;
 }
 #footer-post #toc-footer .toc-level-2:before {
-  color: #333;
+  color: #d44375;
   content: "#";
 }
 #footer-post #toc-footer .toc-level-3 {
@@ -1094,7 +1109,7 @@ article header .meta {
   margin-bottom: 1rem;
 }
 article header .meta * {
-  color: #333;
+  color: #666;
   font-size: 0.85rem;
 }
 article header .author {
@@ -1109,7 +1124,7 @@ article .content h2:before {
   position: absolute;
   top: -4px;
   left: -1rem;
-  color: #333;
+  color: #d44375;
   content: "";
   font-weight: bold;
   font-size: 1.2rem;
@@ -1141,7 +1156,7 @@ article .content blockquote {
   margin: 1rem 10px;
   padding: 0.5em 10px;
   background: inherit;
-  color: #2bbc8a;
+  color: #ab2251;
   quotes: "\201C" "\201D" "\2018" "\2019";
   font-weight: bold;
 }
@@ -1150,7 +1165,7 @@ article .content blockquote p {
 }
 article .content blockquote:before {
   margin-right: 0.25em;
-  color: #2bbc8a;
+  color: #ab2251;
   content: "\201C";
   vertical-align: -0.4em;
   font-size: 2em;
@@ -1200,7 +1215,7 @@ article .content .caption {
   line-height: 1.25;
 }
 .article-tag .tag-link {
-  background-image: linear-gradient(transparent, transparent 10px, #d480aa 10px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 10px, #2bbc8a 10px, #2bbc8a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -1209,7 +1224,7 @@ article .content .caption {
   content: "#";
 }
 .article-category .category-link {
-  background-image: linear-gradient(transparent, transparent 10px, #d480aa 10px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 10px, #2bbc8a 10px, #2bbc8a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -1324,36 +1339,36 @@ article .content .caption {
   text-align: center;
 }
 .pagination .page-number {
-  color: #383838;
+  color: #363533;
   font-size: 0.8rem;
 }
 .pagination a {
   padding: 4px 6px;
   border-radius: 5px;
   background-image: none;
-  color: #383838;
+  color: #363533;
   text-decoration: none;
 }
 .pagination a:hover {
   background-image: none;
 }
 .pagination a:hover:not(.active) {
-  color: #333;
+  color: #111;
 }
 .search-input {
   padding: 4px 7px;
   width: 100%;
   outline: none;
-  border: solid 1px #333;
+  border: solid 1px #666;
   border-radius: 5px;
-  background-color: #fff;
-  color: #383838;
+  background-color: #e2e0de;
+  color: #363533;
   font-size: 1.2rem;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
 }
 .search-input:focus {
-  border: solid 1px #333;
+  border: solid 1px #d44375;
 }
 #search-result ul.search-result-list {
   padding: 0;
@@ -1364,7 +1379,7 @@ article .content .caption {
 }
 #search-result a.search-result-title {
   background-image: none;
-  color: #383838;
+  color: #363533;
   text-transform: capitalize;
   font-weight: bold;
   line-height: 1.2;
@@ -1377,14 +1392,14 @@ article .content .caption {
   font-size: 0.8em;
 }
 #search-result em.search-keyword {
-  border-bottom: 1px dashed #d480aa;
-  color: #d480aa;
+  border-bottom: 1px dashed #2bbc8a;
+  color: #2bbc8a;
   font-weight: bold;
 }
 .search-no-result {
   display: none;
   padding-bottom: 0.5em;
-  color: #383838;
+  color: #363533;
 }
 #tag-cloud .tag-cloud-title {
   color: #666;
@@ -1406,7 +1421,7 @@ article .content .caption {
   display: none;
   padding: 0.2em 0.5em;
   -webkit-font-smoothing: subpixel-antialiased;
-  color: #fff;
+  color: #e2e0de;
   font-display: swap;
   font-weight: 400;
   font-size: 11.200000000000001px;
@@ -1417,7 +1432,7 @@ article .content .caption {
   word-wrap: break-word;
   white-space: pre;
   content: attr(aria-label);
-  background: #383838;
+  background: #363533;
   border-radius: 3px;
   opacity: 0;
 }
@@ -1427,7 +1442,7 @@ article .content .caption {
   display: none;
   width: 0;
   height: 0;
-  color: #383838;
+  color: #363533;
   pointer-events: none;
   content: '';
   border: 6px solid transparent;
@@ -1458,7 +1473,7 @@ article .content .caption {
   right: 50%;
   bottom: -7px;
   margin-right: -6px;
-  border-bottom-color: #383838;
+  border-bottom-color: #363533;
 }
 .tooltipped-sw::after {
   margin-right: -16px;
@@ -1511,57 +1526,72 @@ article .content .caption {
   content: ")";
 }
 .highlight {
-  color: #585260;
-  background: #efecf4;
+  color: #333;
+  background: #f8f8f8;
 }
 .highlight .code .comment,
 .highlight .code .quote {
-  color: #655f6d;
-}
-.highlight .code .variable,
-.highlight .code .template-variable,
-.highlight .code .attribute,
-.highlight .code .tag,
-.highlight .code .name,
-.highlight .code .regexp,
-.highlight .code .link,
-.highlight .code .selector-id,
-.highlight .code .selector-class {
-  color: #be4678;
-}
-.highlight .code .number,
-.highlight .code .meta,
-.highlight .code .built_in,
-.highlight .code .builtin-name,
-.highlight .code .literal,
-.highlight .code .type,
-.highlight .code .params {
-  color: #aa573c;
-}
-.highlight .code .string,
-.highlight .code .symbol,
-.highlight .code .bullet {
-  color: #2a9292;
-}
-.highlight .code .title,
-.highlight .code .section {
-  color: #576ddb;
+  color: #998;
+  font-style: italic;
 }
 .highlight .code .keyword,
-.highlight .code .selector-tag {
-  color: #955ae7;
+.highlight .code .selector-tag,
+.highlight .code .subst {
+  color: #333;
+  font-weight: bold;
 }
-.highlight .code .deletion,
-.highlight .code .addition {
-  color: #19171c;
-  display: inline-block;
-  width: 100%;
+.highlight .code .number,
+.highlight .code .literal,
+.highlight .code .variable,
+.highlight .code .template-variable,
+.highlight .code .tag .attr {
+  color: #008080;
+}
+.highlight .code .string,
+.highlight .code .doctag {
+  color: #d14;
+}
+.highlight .code .title,
+.highlight .code .section,
+.highlight .code .selector-id {
+  color: #900;
+  font-weight: bold;
+}
+.highlight .code .subst {
+  font-weight: normal;
+}
+.highlight .code .type,
+.highlight .code .class .title {
+  color: #458;
+  font-weight: bold;
+}
+.highlight .code .tag,
+.highlight .code .name,
+.highlight .code .attribute {
+  color: #000080;
+  font-weight: normal;
+}
+.highlight .code .regexp,
+.highlight .code .link {
+  color: #009926;
+}
+.highlight .code .symbol,
+.highlight .code .bullet {
+  color: #990073;
+}
+.highlight .code .built_in,
+.highlight .code .builtin-name {
+  color: #0086b3;
+}
+.highlight .code .meta {
+  color: #999;
+  font-weight: bold;
 }
 .highlight .code .deletion {
-  background-color: #be4678;
+  background: #fdd;
 }
 .highlight .code .addition {
-  background-color: #2a9292;
+  background: #dfd;
 }
 .highlight .code .emphasis {
   font-style: italic;
@@ -1596,7 +1626,7 @@ code {
   margin: 1rem 0;
   padding: 10px 15px;
   border-radius: 4px;
-  background: #fafafa;
+  background: #dedcd9;
   font-family: "Menlo", "Meslo LG", monospace;
   -webkit-border-radius: 4px;
 }
@@ -1611,7 +1641,7 @@ code {
   color: #757575;
   font-style: italic;
   font-size: 0.8em;
-  background-image: linear-gradient(transparent, transparent 10px, #d480aa 10px, #d480aa);
+  background-image: linear-gradient(transparent, transparent 10px, #2bbc8a 10px, #2bbc8a);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -1637,7 +1667,7 @@ code {
   transition: opacity 0.2s ease-in;
 }
 .highlight .btn-copy:hover {
-  color: #333;
+  color: #d44375;
 }
 .highlight pre {
   margin: 0;
@@ -1658,81 +1688,105 @@ code {
 #header-post #actions {
   direction: ltr !important;
 }
-/* =================================================================
-   哈吉米智能版：隐藏正文符号 + 自动清理空目录
-   ================================================================= */
-/* 1. 强制隐藏正文里自带的 # 号 */
-.content h2:before,
-.content h3:before,
-.content h4:before,
-.post-content h2:before,
-.post-content h3:before,
-.post-content h4:before,
-.article-entry h2:before,
-.article-entry h3:before,
-.article-entry h4:before {
-  content: "" !important;
-  display: none !important;
-}
-/* 2. 目录容器样式 */
-#toc {
-  text-align: left !important;
-  max-width: 250px;
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-#toc ol {
+/* ==========================================================================
+   哈吉米终极版 V4.0 - 目录彻底修复
+   (绝对禁止 0.1 出现，绝对清除多余 # 号，强制左对齐)
+   ========================================================================== */
+/* 1. 核弹级重置：清除主题自带的所有干扰样式 */
+#toc ol,
+#toc li,
+#toc .toc-link,
+#toc .toc-text,
+#toc .toc-child,
+#toc .toc-item {
   list-style: none !important;
   padding: 0 !important;
   margin: 0 !important;
+  border: none !important;
+  background: none !important;
 }
-/* 3. 目录链接样式 */
+/* 重要：清除主题可能在 li 或 link 上添加的伪元素 # 号 */
+#toc li:before,
+#toc li:after,
+#toc .toc-link:before,
+#toc .toc-link:after {
+  content: none !important;
+  display: none !important;
+}
+/* 2. 容器定位 */
+#toc {
+  text-align: left !important; /* 强制左对齐 */
+  font-size: 0.9rem;
+  line-height: 1.8;
+  padding-left: 10px !important; /* 稍微离左边一点距离 */
+}
+/* 3. 计数器核心逻辑 (修复 0.1 的关键) */
+/* 只有最外层的 ol 负责创建主计数器 */
+#toc > ol {
+  counter-reset: section-counter;
+}
+/* 这里的每一个 li 都是一个主章节 */
+#toc > ol > li.toc-item {
+  margin-top: 12px !important; /* 大章节之间拉开距离 */
+}
+/* --- 二级标题 (H2) --- */
+/* 选中二级标题的链接部分 */
+#toc > ol > li > .toc-link {
+  font-weight: bold; /* 二级标题加粗 */
+  color: #222 !important;
+}
+/* 在二级标题前加序号 */
+#toc > ol > li > .toc-link > .toc-text::before {
+  counter-increment: section-counter;
+  content: counter(section-counter) ". "; /* 显示 "1. " */
+  color: #2bbc8a;
+  margin-right: 5px;
+  font-family: monospace; /* 用等宽字体保证对齐 */
+}
+/* --- 三级标题 (H3) --- */
+/* 三级标题的容器 ol，重置子计数器 */
+#toc .toc-child {
+  padding-left: 20px !important; /* 缩进 */
+  counter-reset: subsection-counter;
+  margin-top: 5px !important;
+}
+/* 选中三级标题的链接 */
+#toc .toc-child .toc-link {
+  font-size: 0.85rem; /* 字体小一点 */
+  color: #666 !important;
+  font-weight: normal;
+}
+/* 在三级标题前加序号 */
+#toc .toc-child .toc-link > .toc-text::before {
+  counter-increment: subsection-counter;
+/* 显示 "1.1 "，利用父级的计数器和自己的计数器拼接 */
+  content: counter(section-counter) "." counter(subsection-counter) " ";
+  color: #999;
+  margin-right: 5px;
+  font-family: monospace;
+}
+/* 4. 链接样式与悬停交互 (防闪烁) */
 #toc .toc-link {
-  display: block;
-  color: #333 !important;
+  display: block !important; /* 让链接占满一行 */
   text-decoration: none;
-  padding: 4px 8px;
+/* 单行文本截断 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px; /* 限制宽度，根据需要微调 */
+  padding: 2px 5px;
   border-radius: 4px;
   transition: all 0.2s ease;
-/* 默认不换行+省略号 */
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  position: relative; /* 为悬停做准备 */
 }
-/* 悬停展开效果 */
+/* 鼠标悬停效果 */
 #toc .toc-link:hover {
-  width: auto !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  background: #f5f5f5;
   color: #2bbc8a !important;
-  position: relative;
-  z-index: 9999;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-/* --- 核心修改：只给“有文字”的 span 加 # 号 --- */
-/* 之前的代码是加在 link 上，所以没字也有符号。现在改加在 text 上！ */
-/* 一级目录 (H2) */
-#toc .toc-item.toc-level-2 > .toc-link .toc-text:before {
-  content: "# ";
-  color: #000;
-  font-weight: bold;
-  margin-right: 5px;
-}
-/* 二级目录 (H3) - 缩进 */
-#toc .toc-item.toc-level-3 {
-  padding-left: 15px !important;
-}
-#toc .toc-item.toc-level-3 > .toc-link .toc-text:before {
-  content: "## ";
-  color: #666;
-  font-size: 0.9em;
-  margin-right: 5px;
-}
-/* 🚀 智能清理：如果标题文字是空的，直接隐藏！ */
-.toc-text:empty {
-  display: none !important;
-}
-#toc .toc-item:has(.toc-text:empty) {
-  display: none !important;
+  background: #f0fdf8; /* 浅绿色背景 */
+/* 悬停展示完整内容 */
+  overflow: visible;
+  white-space: normal;
+  width: auto; /* 宽度自动撑开 */
+  z-index: 100;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
 }
