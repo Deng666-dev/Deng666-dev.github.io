@@ -14,7 +14,7 @@
 <meta property="og:description" content="记录 kail 常用命令">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-12-22T01:56:20.000Z">
-<meta property="article:modified_time" content="2026-01-02T08:31:30.278Z">
+<meta property="article:modified_time" content="2026-01-03T11:56:36.810Z">
 <meta property="article:author" content="Vodka">
 <meta property="article:tag" content="kali">
 <meta name="twitter:card" content="summary">
@@ -111,7 +111,7 @@
   <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/22/kali%20knowledge%20points/&name=kali knowledge points&description=&lt;h1 id=&#34;一些命令&#34;&gt;&lt;a href=&#34;#一些命令&#34; class=&#34;headerlink&#34; title=&#34;一些命令&#34;&gt;&lt;/a&gt;一些命令&lt;/h1&gt;&lt;p&gt;图片分离和拼接：convert分离 montage拼接&lt;br&gt;分解GIF的命令：convert glance.gif flag.png&lt;br&gt;水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg&lt;br&gt;垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg&lt;br&gt;合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png&lt;br&gt;-tile是拼接时每行和每列的图片数，这里用x1，就是只一行&lt;br&gt;-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可&lt;/p&gt;
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/22/kali%20knowledge%20points/&name=kali knowledge points&description=&lt;h2 id=&#34;一些命令&#34;&gt;&lt;a href=&#34;#一些命令&#34; class=&#34;headerlink&#34; title=&#34;一些命令&#34;&gt;&lt;/a&gt;一些命令&lt;/h2&gt;&lt;p&gt;图片分离和拼接：convert分离 montage拼接&lt;br&gt;分解GIF的命令：convert glance.gif flag.png&lt;br&gt;水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg&lt;br&gt;垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg&lt;br&gt;合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png&lt;br&gt;-tile是拼接时每行和每列的图片数，这里用x1，就是只一行&lt;br&gt;-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可&lt;/p&gt;
 &lt;p&gt;拼图：&lt;br&gt;#在kali中处理&lt;br&gt;拉入kali里处理，如果是碎的图片，&lt;br&gt;先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片&lt;br&gt;*.png表示匹配所有图片&lt;br&gt;-tile表示图片的张数&lt;br&gt;-geometry +0+0表示每张图片的间距为0&lt;br&gt;合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）&lt;/p&gt;
 &lt;p&gt;gaps智能拼图：&lt;br&gt;gaps –image&amp;#x3D;out.png –generation&amp;#x3D;30 –population&amp;#x3D;144 –size&amp;#x3D;30 –save &lt;/p&gt;
 &lt;p&gt;–image 指向拼图的路径&lt;br&gt;–size 拼图块的像素尺寸&lt;br&gt;–generations 遗传算法的代的数量&lt;br&gt;–population 个体数量&lt;br&gt;–verbose 每一代训练结束后展示最佳结果&lt;br&gt;–save 将拼图还原为图像&lt;/p&gt;
@@ -125,7 +125,7 @@
     
     
       <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一些命令</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一些命令</span></a></li></ol>
       </div>
     
   </span>
@@ -175,7 +175,7 @@
   
 
   <div class="content e-content" itemprop="articleBody">
-    <h1 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h1><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
+    <h2 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h2><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
 <p>拼图：<br>#在kali中处理<br>拉入kali里处理，如果是碎的图片，<br>先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片<br>*.png表示匹配所有图片<br>-tile表示图片的张数<br>-geometry +0+0表示每张图片的间距为0<br>合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）</p>
 <p>gaps智能拼图：<br>gaps –image&#x3D;out.png –generation&#x3D;30 –population&#x3D;144 –size&#x3D;30 –save </p>
 <p>–image 指向拼图的路径<br>–size 拼图块的像素尺寸<br>–generations 遗传算法的代的数量<br>–population 个体数量<br>–verbose 每一代训练结束后展示最佳结果<br>–save 将拼图还原为图像</p>
@@ -212,7 +212,7 @@
     
     
       <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一些命令</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一些命令</span></a></li></ol>
       </div>
     
 
@@ -227,7 +227,7 @@
   <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2025/12/22/kali%20knowledge%20points/&title=kali knowledge points"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/22/kali%20knowledge%20points/&name=kali knowledge points&description=&lt;h1 id=&#34;一些命令&#34;&gt;&lt;a href=&#34;#一些命令&#34; class=&#34;headerlink&#34; title=&#34;一些命令&#34;&gt;&lt;/a&gt;一些命令&lt;/h1&gt;&lt;p&gt;图片分离和拼接：convert分离 montage拼接&lt;br&gt;分解GIF的命令：convert glance.gif flag.png&lt;br&gt;水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg&lt;br&gt;垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg&lt;br&gt;合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png&lt;br&gt;-tile是拼接时每行和每列的图片数，这里用x1，就是只一行&lt;br&gt;-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可&lt;/p&gt;
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2025/12/22/kali%20knowledge%20points/&name=kali knowledge points&description=&lt;h2 id=&#34;一些命令&#34;&gt;&lt;a href=&#34;#一些命令&#34; class=&#34;headerlink&#34; title=&#34;一些命令&#34;&gt;&lt;/a&gt;一些命令&lt;/h2&gt;&lt;p&gt;图片分离和拼接：convert分离 montage拼接&lt;br&gt;分解GIF的命令：convert glance.gif flag.png&lt;br&gt;水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg&lt;br&gt;垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg&lt;br&gt;合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png&lt;br&gt;-tile是拼接时每行和每列的图片数，这里用x1，就是只一行&lt;br&gt;-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可&lt;/p&gt;
 &lt;p&gt;拼图：&lt;br&gt;#在kali中处理&lt;br&gt;拉入kali里处理，如果是碎的图片，&lt;br&gt;先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片&lt;br&gt;*.png表示匹配所有图片&lt;br&gt;-tile表示图片的张数&lt;br&gt;-geometry +0+0表示每张图片的间距为0&lt;br&gt;合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）&lt;/p&gt;
 &lt;p&gt;gaps智能拼图：&lt;br&gt;gaps –image&amp;#x3D;out.png –generation&amp;#x3D;30 –population&amp;#x3D;144 –size&amp;#x3D;30 –save &lt;/p&gt;
 &lt;p&gt;–image 指向拼图的路径&lt;br&gt;–size 拼图块的像素尺寸&lt;br&gt;–generations 遗传算法的代的数量&lt;br&gt;–population 个体数量&lt;br&gt;–verbose 每一代训练结束后展示最佳结果&lt;br&gt;–save 将拼图还原为图像&lt;/p&gt;

@@ -19,95 +19,46 @@
   <entry>
     <title>自动防御:用Fail2Ban封锁IP</title>
     <url>/2025/12/29/Fail2Ban-ip/</url>
-    <content><![CDATA[<blockquote>
-<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
-</blockquote>
-<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><img src="/2025/12/29/Fail2Ban-ip/1.png" class="" title="可以看见有不明ip尝试破解">
+    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
+<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
+<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
 
 <h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+<center>Fail2Ban详细配置</center>
 
 <h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
 
 <h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
 <img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+<center>cmd连接失败</center>
 
 <p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
 <img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
+<center>FinalShell断开连接</center>
 
 <h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
 <img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
+<center>明显看见 Currently 与 Banned</center>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 
 <img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
+<center>可以看见 sshd Ban</center>
 
 <h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
 <p>解封后可以看见物理机正常连接:</p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">]]></content>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
+<center>cmd.shell连接成功</center>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-
-<h2 id="这里遇到了-SSH-连接卡顿问题"><a href="#这里遇到了-SSH-连接卡顿问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题"></a>这里遇到了 SSH 连接卡顿问题</h2><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux.centos 搭建MySql8.x服务</title>
-    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
-    <content><![CDATA[<h1 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
-
-<h1 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
-
-<h1 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<h1 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h1><blockquote>
-<p><strong>注意：</strong> 设置root密码(必须设置)…</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h1 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
-
-<h1 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux server</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -116,9 +67,9 @@
   <entry>
     <title>Hexo-git-node.js</title>
     <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
+    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
 <p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
-<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.butterfly.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
 <h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
 <figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
 ]]></content>
@@ -130,35 +81,77 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<p>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</p>
+<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+<center>ssh详细配置</center>
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+<center>ufw 断开验证</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<center>SSH 2222断开成功连接</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+<center>SSH 22端口连接失败</center>
+
+<h2 id="这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题"><a href="#这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题"></a>这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题</h2><h3 id="SSH-连接卡顿"><a href="#SSH-连接卡顿" class="headerlink" title="SSH 连接卡顿"></a>SSH 连接卡顿</h3><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">
+<center>详细配置文件</center>
+
+<h3 id="sudo-或者其他命令响应慢-终端反馈慢"><a href="#sudo-或者其他命令响应慢-终端反馈慢" class="headerlink" title="sudo 或者其他命令响应慢,终端反馈慢"></a>sudo 或者其他命令响应慢,终端反馈慢</h3><p>为什么会出现这种情况,通常不是因为系统本身慢，而是配置问题或后台机制导致的，Ubuntu这种开箱即用的功能更多,更容易遇到这些阻塞点,这里一般都是Hostname解析超时的问题</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看主机名</span></span><br><span class="line">    hostname</span><br><span class="line"><span class="comment"># 检查 hosts 文件 如果输出中没有看见&#x27;127.0.1.1 主机名&#x27;的配置就需要手动添加</span></span><br><span class="line">    <span class="built_in">cat</span> /etc/hosts</span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">    <span class="built_in">sudo</span> vim etc/hosts</span><br><span class="line">    在文件头部添加  127.0.0.1 主机名</span><br><span class="line">                   127.0.1.1 主机名</span><br><span class="line">    <span class="comment">## 保存退出即可生效</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux-samba</title>
     <url>/2025/12/24/Linux-samba/</url>
-    <content><![CDATA[<h1 id="网上-yum-源配置-用于本地网络环境"><a href="#网上-yum-源配置-用于本地网络环境" class="headerlink" title="网上 yum 源配置(用于本地网络环境)"></a>网上 yum 源配置(用于本地网络环境)</h1><h2 id="安装samba包"><a href="#安装samba包" class="headerlink" title="安装samba包"></a>安装samba包</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 更新 yum 源</span></span><br><span class="line">  yum update -y</span><br><span class="line"><span class="comment"># 安装 samba 和 samba-client</span></span><br><span class="line">  yum install samba samba-client samba-common -y</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<p>Linux中的Samba服务器是一个非常实用的技能，可以让你在Linux和Windows之间轻松共享文件以下提供两种方法</p>
+<h2 id="网上-yum-源配置-用于本地网络环境"><a href="#网上-yum-源配置-用于本地网络环境" class="headerlink" title="网上 yum 源配置(用于本地网络环境)"></a>网上 yum 源配置(用于本地网络环境)</h2><h3 id="安装samba包"><a href="#安装samba包" class="headerlink" title="安装samba包"></a>安装samba包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 更新 yum 源</span></span><br><span class="line">  yum update -y</span><br><span class="line"><span class="comment"># 安装 samba 和 samba-client</span></span><br><span class="line">  yum install samba samba-client samba-common -y</span><br></pre></td></tr></table></figure>
 
-<h2 id="创建目录设置权限"><a href="#创建目录设置权限" class="headerlink" title="创建目录设置权限"></a>创建目录设置权限</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建共享目录(便于主机访问)</span></span><br><span class="line">  <span class="built_in">mkdir</span> -p /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录权限</span></span><br><span class="line">  <span class="built_in">chmod</span> -R 777 /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录所有者</span></span><br><span class="line">  <span class="built_in">chown</span> -R nobody:nobody /srv/samba/share</span><br></pre></td></tr></table></figure>
+<h3 id="创建目录设置权限"><a href="#创建目录设置权限" class="headerlink" title="创建目录设置权限"></a>创建目录设置权限</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建共享目录(便于主机访问)</span></span><br><span class="line">  <span class="built_in">mkdir</span> -p /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录权限</span></span><br><span class="line">  <span class="built_in">chmod</span> -R 777 /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改目录所有者</span></span><br><span class="line">  <span class="built_in">chown</span> -R nobody:nobody /srv/samba/share</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置-Samba-文件"><a href="#配置-Samba-文件" class="headerlink" title="配置 Samba 文件"></a>配置 Samba 文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份原文件</span></span><br><span class="line">  <span class="built_in">cp</span> /etc/samba/smb.conf /etc/samba/smb.conf.bak</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑文件</span></span><br><span class="line">  vim /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
+<h3 id="配置-Samba-文件"><a href="#配置-Samba-文件" class="headerlink" title="配置 Samba 文件"></a>配置 Samba 文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份原文件</span></span><br><span class="line">  <span class="built_in">cp</span> /etc/samba/smb.conf /etc/samba/smb.conf.bak</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编辑文件</span></span><br><span class="line">  vim /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
 
 <p><span style="color: red; font-weight: bold;">需要密码验证的配置</span></p>
 <figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line">    <span class="attr">workgroup</span> = WORKGROUP</span><br><span class="line">    <span class="attr">security</span> = user</span><br><span class="line">    map to <span class="attr">guest</span> = Bad User</span><br><span class="line">    passdb <span class="attr">backend</span> = tdbsam</span><br><span class="line"></span><br><span class="line"><span class="section">[Share]</span></span><br><span class="line">    <span class="attr">comment</span> = My Samba Share</span><br><span class="line">    <span class="attr">path</span> = /srv/samba/share</span><br><span class="line">    <span class="attr">browsable</span> = <span class="literal">yes</span></span><br><span class="line">    <span class="attr">writable</span> = <span class="literal">yes</span></span><br><span class="line">    guest <span class="attr">ok</span> = <span class="literal">no</span></span><br><span class="line">    read <span class="attr">only</span> = <span class="literal">no</span></span><br><span class="line">    valid <span class="attr">users</span> = @smbgroup</span><br></pre></td></tr></table></figure>
 
-<h2 id="创建-Samba-用户"><a href="#创建-Samba-用户" class="headerlink" title="创建 Samba 用户"></a>创建 Samba 用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可创建一个用户组</span></span><br><span class="line">  groupadd smbgroup </span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建系统用户</span></span><br><span class="line"><span class="comment">## -M表示不创建家目录 -s /sbin/nologin 表示该用户不能登录 shell 比较安全</span></span><br><span class="line">  useradd -M -s /sbin/nologin -g smbgroup user1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 Samba 密码(用于主机连接共享输入)</span></span><br><span class="line">  smbpasswd -a user1</span><br></pre></td></tr></table></figure>
+<h3 id="创建-Samba-用户"><a href="#创建-Samba-用户" class="headerlink" title="创建 Samba 用户"></a>创建 Samba 用户</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可创建一个用户组</span></span><br><span class="line">  groupadd smbgroup </span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建系统用户</span></span><br><span class="line"><span class="comment">## -M表示不创建家目录 -s /sbin/nologin 表示该用户不能登录 shell 比较安全</span></span><br><span class="line">  useradd -M -s /sbin/nologin -g smbgroup user1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 Samba 密码(用于主机连接共享输入)</span></span><br><span class="line">  smbpasswd -a user1</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置防火墙"><a href="#配置防火墙" class="headerlink" title="配置防火墙"></a>配置防火墙</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 放行 samba 服务</span></span><br><span class="line">  firewall-cmd --permanent --add-service=samba</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<h3 id="配置防火墙"><a href="#配置防火墙" class="headerlink" title="配置防火墙"></a>配置防火墙</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 放行 samba 服务</span></span><br><span class="line">  firewall-cmd --permanent --add-service=samba</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置-SELinux"><a href="#配置-SELinux" class="headerlink" title="配置 SELinux"></a>配置 SELinux</h2><p><span style="color: red; font-weight: bold;">如不配置 即使权限777也不能访问</span></p>
+<h3 id="配置-SELinux"><a href="#配置-SELinux" class="headerlink" title="配置 SELinux"></a>配置 SELinux</h3><p><span style="color: red; font-weight: bold;">如不配置 即使权限777也不能访问</span></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 方法A:做 Samba 共享目录</span></span><br><span class="line">  <span class="built_in">chcon</span> -t samba_share_t /srv/samba/share</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方法B:如不处理 SELinux 可设置成宽容模式</span></span><br><span class="line">  <span class="built_in">sudo</span> setenforce 0</span><br><span class="line"></span><br><span class="line"><span class="comment">## 启动服务</span></span><br><span class="line">  systemctl start smb nmb</span><br><span class="line">  systemctl <span class="built_in">enable</span> smb nmb</span><br><span class="line"></span><br><span class="line"><span class="comment">## 主机验证</span></span><br><span class="line">打开```win + R``` : 输入 ```\\&lt;Linux IP地址&gt;```</span><br><span class="line">Linux 进入 samba</span><br><span class="line">  smbclient //localhost/Share -U user1</span><br></pre></td></tr></table></figure>
 
-<h1 id="本地-yum-源配置-用于无外网-挂在iso"><a href="#本地-yum-源配置-用于无外网-挂在iso" class="headerlink" title="本地 yum 源配置(用于无外网 挂在iso)"></a>本地 yum 源配置(用于无外网 挂在iso)</h1><h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建挂载点目录</span></span><br><span class="line">  <span class="built_in">mkdir</span> /iso</span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂在光盘镜像到目录</span></span><br><span class="line">  mount /dev/cdrom /iso     [临时]</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;/dev/cdrom /iso iso9660 defaults 0 0&quot;</span> &gt;&gt; /etc/fstab     [永久生效]</span><br></pre></td></tr></table></figure>
+<h2 id="本地-yum-源配置-用于无外网-挂在iso"><a href="#本地-yum-源配置-用于无外网-挂在iso" class="headerlink" title="本地 yum 源配置(用于无外网 挂在iso)"></a>本地 yum 源配置(用于无外网 挂在iso)</h2><h3 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建挂载点目录</span></span><br><span class="line">  <span class="built_in">mkdir</span> /iso</span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂在光盘镜像到目录</span></span><br><span class="line">  mount /dev/cdrom /iso     [临时]</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;/dev/cdrom /iso iso9660 defaults 0 0&quot;</span> &gt;&gt; /etc/fstab     [永久生效]</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置本地-yum-源文件"><a href="#配置本地-yum-源文件" class="headerlink" title="配置本地 yum 源文件"></a>配置本地 yum 源文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入 yum 目录</span></span><br><span class="line">  <span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建备份目录</span></span><br><span class="line">  <span class="built_in">mkdir</span> -p /etc/yum.repos.d/backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将网络源移动到备份目录</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-* /etc/yum.repos.d/backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新的本地源配置</span></span><br><span class="line">  vim /etc/yum.repos.d/mydev.repo</span><br><span class="line">填入</span><br><span class="line">[mydev]</span><br><span class="line">name=mydev</span><br><span class="line">baseurl=file:///iso</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">方法二： 可一键生成配置文件</span><br><span class="line"><span class="built_in">cat</span> &gt; /etc/yum.repos.d/dvd.repo &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[dvd]</span></span><br><span class="line"><span class="string">name=Local DVD</span></span><br><span class="line"><span class="string">baseurl=file:///iso</span></span><br><span class="line"><span class="string">gpgcheck=0</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置本地-yum-源文件"><a href="#配置本地-yum-源文件" class="headerlink" title="配置本地 yum 源文件"></a>配置本地 yum 源文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入 yum 目录</span></span><br><span class="line">  <span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建备份目录</span></span><br><span class="line">  <span class="built_in">mkdir</span> -p /etc/yum.repos.d/backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将网络源移动到备份目录</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-* /etc/yum.repos.d/backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新的本地源配置</span></span><br><span class="line">  vim /etc/yum.repos.d/mydev.repo</span><br><span class="line">填入</span><br><span class="line">[mydev]</span><br><span class="line">name=mydev</span><br><span class="line">baseurl=file:///iso</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line"></span><br><span class="line">方法二： 可一键生成配置文件</span><br><span class="line"><span class="built_in">cat</span> &gt; /etc/yum.repos.d/dvd.repo &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[dvd]</span></span><br><span class="line"><span class="string">name=Local DVD</span></span><br><span class="line"><span class="string">baseurl=file:///iso</span></span><br><span class="line"><span class="string">gpgcheck=0</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="刷新-yum-缓存"><a href="#刷新-yum-缓存" class="headerlink" title="刷新 yum 缓存"></a>刷新 yum 缓存</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 清理旧缓存</span></span><br><span class="line">  yum clean all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立新缓存</span></span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
+<h3 id="刷新-yum-缓存"><a href="#刷新-yum-缓存" class="headerlink" title="刷新 yum 缓存"></a>刷新 yum 缓存</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 清理旧缓存</span></span><br><span class="line">  yum clean all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 建立新缓存</span></span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
 
-<h2 id="安装-Samba"><a href="#安装-Samba" class="headerlink" title="安装 Samba"></a>安装 Samba</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">  yum install samba -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查安装</span></span><br><span class="line">  rpm -qa | grep samba</span><br></pre></td></tr></table></figure>
+<h3 id="安装-Samba"><a href="#安装-Samba" class="headerlink" title="安装 Samba"></a>安装 Samba</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">  yum install samba -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查安装</span></span><br><span class="line">  rpm -qa | grep samba</span><br></pre></td></tr></table></figure>
 
-<h1 id="配置阿里云-yum-源"><a href="#配置阿里云-yum-源" class="headerlink" title="配置阿里云 yum 源"></a>配置阿里云 yum 源</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 备份原配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak</span><br><span class="line"></span><br><span class="line"><span class="comment">## 下载阿里云</span></span><br><span class="line">  wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment">## 安装</span></span><br><span class="line">  yum clean all &amp;&amp; yum makecache</span><br><span class="line">  yum install samba -y</span><br></pre></td></tr></table></figure>
+<h2 id="配置阿里云-yum-源"><a href="#配置阿里云-yum-源" class="headerlink" title="配置阿里云 yum 源"></a>配置阿里云 yum 源</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 备份原配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak</span><br><span class="line"></span><br><span class="line"><span class="comment">## 下载阿里云</span></span><br><span class="line">  wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment">## 安装</span></span><br><span class="line">  yum clean all &amp;&amp; yum makecache</span><br><span class="line">  yum install samba -y</span><br></pre></td></tr></table></figure>
 
-<h1 id="一些命令："><a href="#一些命令：" class="headerlink" title="一些命令："></a>一些命令：</h1><p>put 本地文件名   把Linux本地文件传进共享<br>get 远程文件名   把共享里的文件拉回本地</p>
+<h2 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h2><p>put 本地文件名   把Linux本地文件传进共享<br>get 远程文件名   把共享里的文件拉回本地</p>
 <p>wget命令:非交互式网络下载工具,可在后台运行<br>wget 【选项】【参数】<br>常用用法是命令后面直接跟软件包地址<br>-P指定下载目录<br>-O 指定保存文件名<br>-c 断点续传<br>-b 后台下载</p>
 <p>curl命令:传输数据(文件上传下载、表单提交、cookie处理)<br>curl【选项】【参数】<br>-o 将输出保存到文件<br>-O 使用远程文件名<br>-s保存静默模式（不显示进度）<br>-v显示详细通信过程</p>
 ]]></content>
@@ -168,6 +161,46 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux.centos 搭建MySql8.x服务</title>
+    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<h2 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h3><p>注意:设置root密码(必须设置)…</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
+
+<h2 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux server</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kali knowledge points</title>
+    <url>/2025/12/22/kali%20knowledge%20points/</url>
+    <content><![CDATA[<h2 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h2><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
+<p>拼图：<br>#在kali中处理<br>拉入kali里处理，如果是碎的图片，<br>先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片<br>*.png表示匹配所有图片<br>-tile表示图片的张数<br>-geometry +0+0表示每张图片的间距为0<br>合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）</p>
+<p>gaps智能拼图：<br>gaps –image&#x3D;out.png –generation&#x3D;30 –population&#x3D;144 –size&#x3D;30 –save </p>
+<p>–image 指向拼图的路径<br>–size 拼图块的像素尺寸<br>–generations 遗传算法的代的数量<br>–population 个体数量<br>–verbose 每一代训练结束后展示最佳结果<br>–save 将拼图还原为图像</p>
+<p>gaps –image&#x3D;flag.jpg –generations&#x3D;50 –population&#x3D;180 –size&#x3D;125 –verbose</p>
+<p>-generations 你要迭代多少次<br>-population 你有多少个小拼图<br>–size 每张小图，也就是拼图小块的大小<br>–verbose 实时显示</p>
+]]></content>
+      <categories>
+        <category>kali</category>
+      </categories>
+      <tags>
+        <tag>kali</tag>
       </tags>
   </entry>
   <entry>
@@ -199,35 +232,16 @@
       </tags>
   </entry>
   <entry>
-    <title>kali knowledge points</title>
-    <url>/2025/12/22/kali%20knowledge%20points/</url>
-    <content><![CDATA[<h1 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h1><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
-<p>拼图：<br>#在kali中处理<br>拉入kali里处理，如果是碎的图片，<br>先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片<br>*.png表示匹配所有图片<br>-tile表示图片的张数<br>-geometry +0+0表示每张图片的间距为0<br>合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）</p>
-<p>gaps智能拼图：<br>gaps –image&#x3D;out.png –generation&#x3D;30 –population&#x3D;144 –size&#x3D;30 –save </p>
-<p>–image 指向拼图的路径<br>–size 拼图块的像素尺寸<br>–generations 遗传算法的代的数量<br>–population 个体数量<br>–verbose 每一代训练结束后展示最佳结果<br>–save 将拼图还原为图像</p>
-<p>gaps –image&#x3D;flag.jpg –generations&#x3D;50 –population&#x3D;180 –size&#x3D;125 –verbose</p>
-<p>-generations 你要迭代多少次<br>-population 你有多少个小拼图<br>–size 每张小图，也就是拼图小块的大小<br>–verbose 实时显示</p>
-]]></content>
-      <categories>
-        <category>kali</category>
-      </categories>
-      <tags>
-        <tag>kali</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
     <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<h2 id="开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户"><a href="#开始前可以安全初始化一下-运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户"></a>开始前可以安全初始化一下 : 运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)</p>
-<p>Remove anonymous users? [Y&#x2F;n] -&gt; Y</p>
-<p>Disallow root login remotely? [Y&#x2F;n] -&gt; Y</p>
-<p>Remove test database? [Y&#x2F;n] -&gt; Y</p>
-<p>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
+    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
+<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
 <p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
 <h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
 
 <img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
+<center>Nginx 详细配置图</center>
 
 <h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
 
@@ -245,45 +259,49 @@
   <entry>
     <title>Web安全实战：Docker 容器化部署 DVWA 靶场与 Burp Suite 暴力破解全流程</title>
     <url>/2025/12/31/web-docker-dvwa-bp/</url>
-    <content><![CDATA[<p><em><strong>其中 dvwa:latest 就例如镜像 容器是允许起来的实例是基于镜像生成 Repository就是应用商店 存放镜像 最大的为 Docker Hub；现在我列出详细流程</strong></em></p>
-<h1 id="安装-Dockers"><a href="#安装-Dockers" class="headerlink" title="安装 Dockers"></a>安装 Dockers</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install docker.io -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start docker</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<p>本文记录了在 Ubuntu 环境下，从零开始安装 Docker、配置网络代理解决拉取超时问题，并一键部署 DVWA 靶场，最后结合 Burp Suite 完成 Brute Force（暴力破解）渗透测试的完整实战过程。</p>
+<p><em><strong>其中 dvwa:latest 就例如镜像 容器是允许起来的实例是基于镜像生成 Repository就是应用商店 存放镜像 最大的为 Docker Hub；现在我列出详细流程</strong></em></p>
+<h2 id="安装-Dockers"><a href="#安装-Dockers" class="headerlink" title="安装 Dockers"></a>安装 Dockers</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install docker.io -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start docker</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> docker</span><br></pre></td></tr></table></figure>
 
-<h1 id="解决一下权限问题"><a href="#解决一下权限问题" class="headerlink" title="解决一下权限问题"></a>解决一下权限问题</h1><p>只有 root 才配玩 Docker,一般权限都是禁 root 所以需要把当前用户加入 docker</p>
+<h2 id="解决一下权限问题"><a href="#解决一下权限问题" class="headerlink" title="解决一下权限问题"></a>解决一下权限问题</h2><p>只有 root 才配玩 Docker,一般权限都是禁 root 所以需要把当前用户加入 docker</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> usermod -aG docker <span class="variable">$USER</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>**注意:**必须退出重连 SSH 才会生效 !!!</p>
 </blockquote>
 <p>重连后可以输入 <code>docker ps</code> 验证一下 如不报错权限搞定</p>
-<h1 id="进行-Docker-拉取-这里提供两种方法"><a href="#进行-Docker-拉取-这里提供两种方法" class="headerlink" title="进行 Docker 拉取 [这里提供两种方法]"></a>进行 Docker 拉取 [这里提供两种方法]</h1><h2 id="配置梯子直接拉取-Docker-Hub-镜像-强荐"><a href="#配置梯子直接拉取-Docker-Hub-镜像-强荐" class="headerlink" title="配置梯子直接拉取 Docker Hub 镜像(强荐)"></a>配置梯子直接拉取 Docker Hub 镜像(强荐)</h2><blockquote>
-<p><em><strong>如仅仅在物理机上挂了梯子 Docker服务是不会自动走梯子 它是一个独立的后台服务，不会自动读取shell，所以我们手动让 Docker 走代理</strong></em></p>
-</blockquote>
+<h2 id="进行-Docker-拉取-这里提供两种方法"><a href="#进行-Docker-拉取-这里提供两种方法" class="headerlink" title="进行 Docker 拉取 [这里提供两种方法]"></a>进行 Docker 拉取 [这里提供两种方法]</h2><h3 id="配置梯子直接拉取-Docker-Hub-镜像-强荐"><a href="#配置梯子直接拉取-Docker-Hub-镜像-强荐" class="headerlink" title="配置梯子直接拉取 Docker Hub 镜像(强荐)"></a>配置梯子直接拉取 Docker Hub 镜像(强荐)</h3><p><em><strong>如仅仅在物理机上挂了梯子 Docker服务是不会自动走梯子 它是一个独立的后台服务，不会自动读取shell，所以我们手动让 Docker 走代理</strong></em></p>
 <p>首先必须确保梯子在物理机上运行 NAT 模式 确保梯子开启 允许局域网连接 记住梯子默认端口</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在 Ubuntu 中查看物理机的通信IP</span></span><br><span class="line">    ip route show | grep default</span><br></pre></td></tr></table></figure>
 
-<img src="/2025/12/31/web-docker-dvwa-bp/ip.png" class="" title="通过 ip route 获取宿主机网关地址">
+<img src="/2025/12/31/web-docker-dvwa-bp/ip.png" class="">
+<center>通过 ip route 获取宿主机网关地址</center>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建配置目录</span></span><br><span class="line">    <span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /etc/systemd/system/docker.service.d</span><br><span class="line"><span class="comment"># 创建并编辑代理文件</span></span><br><span class="line">    <span class="built_in">sudo</span> vim /etc/systemd/system/docker.service.d/http-proxy.conf</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight docker"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ip 和端口替换为实际ip</span></span><br><span class="line">    [Service]</span><br><span class="line">    Environment=<span class="string">&quot;HTTP_PROXY=http://127.0.0.1:7890&quot;</span></span><br><span class="line">    Environment=<span class="string">&quot;HTTPS_PROXY=http://127.0.0.1:7890&quot;</span></span><br><span class="line">    Environment=<span class="string">&quot;NO_PROXY=localhost,127.0.0.1,docker-registry.some-internal-domain.com&quot;</span></span><br></pre></td></tr></table></figure>
 
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-00-13-02.png" class="" title="docker 详细配置">
+<center>docker 详细配置</center>
 
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-00-27-27.png" class="" title="局域网ip">
+<center>局域网ip</center>
 
 <p><em><strong>这里需要注意查看的 via 后ip可能会不同 这里需要设置成与代理软件虚拟网卡一致就行</strong></em></p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下 Docker</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br></pre></td></tr></table></figure>
 
-<h2 id="更换国内稳定镜像源-无梯子"><a href="#更换国内稳定镜像源-无梯子" class="headerlink" title="更换国内稳定镜像源(无梯子)"></a>更换国内稳定镜像源(无梯子)</h2><p>这里推荐登录 阿里云容器镜像服务控制台获取镜像加速器<br><a href="https://account.aliyun.com/login/login.htm?oauth_callback=https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors&lang=zh">https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fcr.console.aliyun.com%2Fcn-hangzhou%2Finstances%2Fmirrors&amp;lang=zh</a></p>
+<h3 id="更换国内稳定镜像源-无梯子"><a href="#更换国内稳定镜像源-无梯子" class="headerlink" title="更换国内稳定镜像源(无梯子)"></a>更换国内稳定镜像源(无梯子)</h3><p>这里推荐登录 阿里云容器镜像服务控制台获取镜像加速器<br><a href="https://account.aliyun.com/login/login.htm?oauth_callback=https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors&lang=zh">https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Fcr.console.aliyun.com%2Fcn-hangzhou%2Finstances%2Fmirrors&amp;lang=zh</a></p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/docker/daemon.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#将以下内容替换成自己的阿里云地址</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;https://你的专属ID.mirror.aliyuncs.com&quot;</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl daemon-reload</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart docker</span><br></pre></td></tr></table></figure>
 
-<h1 id="一键部署-DVWA-靶场"><a href="#一键部署-DVWA-靶场" class="headerlink" title="一键部署 DVWA 靶场"></a>一键部署 DVWA 靶场</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拉取镜像</span></span><br><span class="line">    docker pull vulnerables/web-dvwa</span><br><span class="line"><span class="comment"># 启动容器</span></span><br><span class="line">    docker run -d -p 8080:80 --name my_dvwa vulnerables/web-dvwa</span><br><span class="line"></span><br><span class="line">    <span class="comment">## 这里的-p 8080:80 使用了Dokcer的端口映射功能 8080指物理机开放的端口,80指 DVWA 容器内容 Apache 服务器监听的默认端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证是否 up</span></span><br><span class="line">    docker ps</span><br><span class="line"><span class="comment"># 放行 UFW 8080</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 8080/tcp</span><br></pre></td></tr></table></figure>
-<h2 id="浏览器访问"><a href="#浏览器访问" class="headerlink" title="浏览器访问"></a>浏览器访问</h2><p>输入 <a href="http://192.168.88.135:8080/">http://192.168.88.135:8080</a> $替换成实际地址端口<br>默认是 admin password</p>
-<img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-13-57.png" class="" title="可以看见成功部署 Docker">
+<h2 id="一键部署-DVWA-靶场"><a href="#一键部署-DVWA-靶场" class="headerlink" title="一键部署 DVWA 靶场"></a>一键部署 DVWA 靶场</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拉取镜像</span></span><br><span class="line">    docker pull vulnerables/web-dvwa</span><br><span class="line"><span class="comment"># 启动容器</span></span><br><span class="line">    docker run -d -p 8080:80 --name my_dvwa vulnerables/web-dvwa</span><br><span class="line"></span><br><span class="line">    <span class="comment">## 这里的-p 8080:80 使用了Dokcer的端口映射功能 8080指物理机开放的端口,80指 DVWA 容器内容 Apache 服务器监听的默认端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证是否 up</span></span><br><span class="line">    docker ps</span><br><span class="line"><span class="comment"># 放行 UFW 8080</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 8080/tcp</span><br></pre></td></tr></table></figure>
+<h3 id="浏览器访问"><a href="#浏览器访问" class="headerlink" title="浏览器访问"></a>浏览器访问</h3><p>输入 <a href="http://192.168.88.135:8080/">http://192.168.88.135:8080</a> $替换成实际地址端口<br>默认是 admin password</p>
+<img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-13-57.png" class="" width="">
+<center>可以看见成功部署 Docker </center>
 
-<h1 id="开始-bp-简单爆破-这里的难度为Low"><a href="#开始-bp-简单爆破-这里的难度为Low" class="headerlink" title="开始 bp 简单爆破(这里的难度为Low)"></a>开始 bp 简单爆破(这里的难度为Low)</h1><img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-37-09.png" class="" title="这里简单设置以下代理">
+<h2 id="开始-bp-简单爆破-这里的难度为Low"><a href="#开始-bp-简单爆破-这里的难度为Low" class="headerlink" title="开始 bp 简单爆破(这里的难度为Low)"></a>开始 bp 简单爆破(这里的难度为Low)</h2><img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-37-09.png" class="" title="这里简单设置以下代理">
+<center>这里简单设置下代理</center>
 
 <p>返回 bp 查看监听器</p>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-39-32.png" class="" title="可以看见已经成功了">
@@ -294,17 +312,17 @@
 <p>可以看见第一行存在brute 成功抓取到数据包 </p>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-05-15.png" class="">
 
-<h2 id="现在用-intruder-进行爆破"><a href="#现在用-intruder-进行爆破" class="headerlink" title="现在用 intruder 进行爆破"></a>现在用 intruder 进行爆破</h2><p>将 password 中的 123(也就是输入的密码) 发送到 Intruder 中进行攻击</p>
+<h3 id="现在用-intruder-进行爆破"><a href="#现在用-intruder-进行爆破" class="headerlink" title="现在用 intruder 进行爆破"></a>现在用 intruder 进行爆破</h3><p>将 password 中的 123(也就是输入的密码) 发送到 Intruder 中进行攻击</p>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-48-52.png" class="">
 
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-55-59.png" class="" title="手动输入猜测的密码">
+<center>手动输入猜测的密码</center>
 
-<blockquote>
 <p><em><strong>在 Intruder 列表中,关注 Length 这一列 如长度是固定的说明返回的都是”用户名密码错误”，其中有一个长度明显发生变化,就判断相应包里多了”Welcome”和登录成功的图片代码,在盲测中，长度差异往往是判断爆破是否成功的关键指标</strong></em></p>
-</blockquote>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-10-32.png" class="">
 
-<img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-51-58.png" class="" title="成功登录 !!!">]]></content>
+<img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-51-58.png" class="" title="成功登录 !!!">
+<center>成功登录！！！</center>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>

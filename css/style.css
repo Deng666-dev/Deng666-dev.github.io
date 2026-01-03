@@ -321,7 +321,7 @@ body .h1 {
   display: block;
   margin-top: 3rem;
   margin-bottom: 1rem;
-  color: #2bbc8a;
+  color: #333;
   letter-spacing: 0.01em;
   font-weight: 700;
   font-style: normal;
@@ -335,14 +335,14 @@ body .h2 {
   display: block;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
-  color: #383838;
+  color: #333;
   text-transform: none;
   letter-spacing: normal;
   font-weight: bold;
   font-size: 1rem;
 }
 body h3 {
-  color: #383838;
+  color: #333;
   text-decoration: underline;
   font-weight: bold;
   font-size: 0.9rem;
@@ -352,7 +352,7 @@ body h5,
 body h6 {
   display: inline;
   text-decoration: none;
-  color: #8c8c8c;
+  color: #333;
   font-weight: bold;
   font-size: 0.9rem;
 }
@@ -364,7 +364,7 @@ body h6 {
   margin-bottom: 0.5rem;
 }
 body hr {
-  border: 0.5px dashed #8c8c8c;
+  border: 0.5px dashed #333;
   opacity: 0.5;
   margin: 0;
   margin-top: 20px;
@@ -426,7 +426,7 @@ body table {
 body th {
   padding: 8px;
   border-bottom: 1px dashed #666;
-  color: #383838;
+  color: #333;
   font-weight: bold;
   font-size: 13px;
 }
@@ -620,11 +620,9 @@ body {
   border-radius: 5px;
   background-size: 50px 50px;
   background-repeat: no-repeat;
-  filter: grayscale(100%);
-  -webkit-filter: grayscale(100%);
 }
 #header #nav {
-  color: #2bbc8a;
+  color: #333;
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
@@ -638,10 +636,10 @@ body {
 }
 #header #nav ul a {
   margin-right: 15px;
-  color: #2bbc8a;
+  color: #333;
 }
 #header #nav ul a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #2bbc8a 5px, #2bbc8a);
+  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -650,7 +648,7 @@ body {
   display: inline-block;
   margin-right: 15px;
   border-right: 1px dotted;
-  border-color: #2bbc8a;
+  border-color: #333;
   vertical-align: middle;
 }
 #header #nav ul .icon {
@@ -662,10 +660,6 @@ body {
 }
 #header #nav ul li:last-child a {
   margin-right: 0;
-}
-#header:hover #logo {
-  filter: none;
-  -webkit-filter: none;
 }
 @media screen and (max-width: 480px) {
   #header #title {
@@ -747,7 +741,7 @@ body {
   margin-left: 15px;
 }
 #header-post #menu-icon:hover {
-  color: #2bbc8a;
+  color: #333;
 }
 #header-post #menu-icon-tablet {
   float: right;
@@ -755,7 +749,7 @@ body {
   margin-left: 15px;
 }
 #header-post #menu-icon-tablet:hover {
-  color: #2bbc8a;
+  color: #333;
 }
 #header-post #top-icon-tablet {
   position: fixed;
@@ -765,17 +759,17 @@ body {
   margin-left: 15px;
 }
 #header-post #top-icon-tablet:hover {
-  color: #2bbc8a;
+  color: #333;
 }
 #header-post .active {
-  color: #2bbc8a;
+  color: #333;
 }
 #header-post #menu {
   display: none;
   margin-right: 2rem;
 }
 #header-post #nav {
-  color: #2bbc8a;
+  color: #333;
   letter-spacing: 0.01em;
   font-weight: 200;
   font-style: normal;
@@ -786,16 +780,16 @@ body {
 }
 #header-post #nav ul a {
   margin-right: 15px;
-  color: #2bbc8a;
+  color: #333;
 }
 #header-post #nav ul a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #2bbc8a 5px, #2bbc8a);
+  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
 }
 #header-post #nav ul li {
-  border-right: 1px dotted #2bbc8a;
+  border-right: 1px dotted #333;
 }
 #header-post #nav ul li:last-child {
   margin-right: 0;
@@ -849,7 +843,7 @@ body {
   font-size: 0.8rem;
 }
 #header-post #toc .toc-level-2:before {
-  color: #2bbc8a;
+  color: #333;
   content: "#";
 }
 #header-post #toc .toc-level-3 {
@@ -947,11 +941,11 @@ body {
   text-align: center;
 }
 #footer-post #nav-footer a {
-  color: #2bbc8a;
+  color: #333;
   font-size: 1em;
 }
 #footer-post #nav-footer a:hover {
-  background-image: linear-gradient(transparent, transparent 5px, #2bbc8a 5px, #2bbc8a);
+  background-image: linear-gradient(transparent, transparent 5px, #333 5px, #333);
   background-position: bottom;
   background-size: 100% 6px;
   background-repeat: repeat-x;
@@ -982,7 +976,7 @@ body {
 #footer-post #actions-footer a {
   display: inline-block;
   padding-left: 1rem;
-  color: #2bbc8a;
+  color: #333;
 }
 #footer-post #share-footer {
   padding-right: 1rem;
@@ -1029,7 +1023,7 @@ body {
   font-size: 0.8rem;
 }
 #footer-post #toc-footer .toc-level-2:before {
-  color: #2bbc8a;
+  color: #333;
   content: "#";
 }
 #footer-post #toc-footer .toc-level-3 {
@@ -1100,7 +1094,7 @@ article header .meta {
   margin-bottom: 1rem;
 }
 article header .meta * {
-  color: #8c8c8c;
+  color: #333;
   font-size: 0.85rem;
 }
 article header .author {
@@ -1115,8 +1109,8 @@ article .content h2:before {
   position: absolute;
   top: -4px;
   left: -1rem;
-  color: #2bbc8a;
-  content: "#";
+  color: #333;
+  content: "";
   font-weight: bold;
   font-size: 1.2rem;
 }
@@ -1344,13 +1338,13 @@ article .content .caption {
   background-image: none;
 }
 .pagination a:hover:not(.active) {
-  color: #383838;
+  color: #333;
 }
 .search-input {
   padding: 4px 7px;
   width: 100%;
   outline: none;
-  border: solid 1px #8c8c8c;
+  border: solid 1px #333;
   border-radius: 5px;
   background-color: #fff;
   color: #383838;
@@ -1359,7 +1353,7 @@ article .content .caption {
   -moz-border-radius: 5px;
 }
 .search-input:focus {
-  border: solid 1px #2bbc8a;
+  border: solid 1px #333;
 }
 #search-result ul.search-result-list {
   padding: 0;
@@ -1643,7 +1637,7 @@ code {
   transition: opacity 0.2s ease-in;
 }
 .highlight .btn-copy:hover {
-  color: #2bbc8a;
+  color: #333;
 }
 .highlight pre {
   margin: 0;
@@ -1663,4 +1657,82 @@ code {
 }
 #header-post #actions {
   direction: ltr !important;
+}
+/* =================================================================
+   哈吉米智能版：隐藏正文符号 + 自动清理空目录
+   ================================================================= */
+/* 1. 强制隐藏正文里自带的 # 号 */
+.content h2:before,
+.content h3:before,
+.content h4:before,
+.post-content h2:before,
+.post-content h3:before,
+.post-content h4:before,
+.article-entry h2:before,
+.article-entry h3:before,
+.article-entry h4:before {
+  content: "" !important;
+  display: none !important;
+}
+/* 2. 目录容器样式 */
+#toc {
+  text-align: left !important;
+  max-width: 250px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+#toc ol {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+/* 3. 目录链接样式 */
+#toc .toc-link {
+  display: block;
+  color: #333 !important;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+/* 默认不换行+省略号 */
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+/* 悬停展开效果 */
+#toc .toc-link:hover {
+  width: auto !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  background: #f5f5f5;
+  color: #2bbc8a !important;
+  position: relative;
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+/* --- 核心修改：只给“有文字”的 span 加 # 号 --- */
+/* 之前的代码是加在 link 上，所以没字也有符号。现在改加在 text 上！ */
+/* 一级目录 (H2) */
+#toc .toc-item.toc-level-2 > .toc-link .toc-text:before {
+  content: "# ";
+  color: #000;
+  font-weight: bold;
+  margin-right: 5px;
+}
+/* 二级目录 (H3) - 缩进 */
+#toc .toc-item.toc-level-3 {
+  padding-left: 15px !important;
+}
+#toc .toc-item.toc-level-3 > .toc-link .toc-text:before {
+  content: "## ";
+  color: #666;
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+/* 🚀 智能清理：如果标题文字是空的，直接隐藏！ */
+.toc-text:empty {
+  display: none !important;
+}
+#toc .toc-item:has(.toc-text:empty) {
+  display: none !important;
 }
