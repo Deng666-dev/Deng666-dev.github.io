@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="LAMP &#x3D; Linux + Apache + MySQL + php 全流程零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统 安装 Apache(httpd)123456789# 基础安装配置sudo yum update -ysudo yum install httpd -ysudo systemctl start httpdsudo systemctl ena">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LAMP全架构搭建流程-部署WordPress">
+<meta property="og:url" content="http://example.com/2026/01/05/Linux-LAMP/index.html">
+<meta property="og:site_name" content="Vodka Blog">
+<meta property="og:description" content="LAMP &#x3D; Linux + Apache + MySQL + php 全流程零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统 安装 Apache(httpd)123456789# 基础安装配置sudo yum update -ysudo yum install httpd -ysudo systemctl start httpdsudo systemctl ena">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-09-59-29.png">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-10-12-12.png">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-11-27-09.png">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-11-29-37.png">
+<meta property="og:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-11-42-02.png">
+<meta property="article:published_time" content="2026-01-05T01:58:46.000Z">
+<meta property="article:modified_time" content="2026-01-06T07:16:18.306Z">
+<meta property="article:author" content="Vodka">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/avatar.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/avatar.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+        
+      
+    
+    <!-- title -->
+    <title>LAMP全架构搭建流程-部署WordPress</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<div id="rocket-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+    <svg t="1704290000000" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4286" width="32" height="32"><path d="M885.333333 486.4c-12.8-12.8-34.133333-12.8-46.933333 0L554.666667 768V128c0-19.2-14.933333-34.133333-34.133334-34.133333h-17.066666c-19.2 0-34.133333 14.933333-34.133334 34.133333v640L185.6 486.4c-12.8-12.8-34.133333-12.8-46.933333 0-12.8 12.8-12.8 34.133333 0 46.933333l341.333333 341.333334c6.4 6.4 14.933333 8.533333 23.466667 8.533333 8.533333 0 17.066667-4.266667 23.466666-8.533333l341.333334-341.333334c12.8-12.8 12.8-34.133333 0-46.933333z" fill="#ffffff" p-id="4287" transform="rotate(180, 512, 512)"></path></svg>
+</div>
+
+<style>
+#rocket-to-top {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 50px; /* 按钮大小 */
+    height: 50px;
+    background: #2bbc8a; /* 主题绿背景 */
+    border-radius: 50%; /* 圆形 */
+    box-shadow: 0 4px 10px rgba(43, 188, 138, 0.4); /* 绿色阴影 */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0; /* 默认透明 */
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(20px); /* 默认向下藏一点 */
+}
+
+/* 激活状态：显示并浮上来 */
+#rocket-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 悬停状态：起飞效果 */
+#rocket-to-top:hover {
+    background: #249e73; /* 深一点的绿色 */
+    transform: translateY(-5px); /* 向上浮动 */
+    box-shadow: 0 6px 15px rgba(43, 188, 138, 0.6);
+}
+</style>
+
+<script>
+// 监听滚动事件，控制火箭显示
+window.addEventListener('scroll', function() {
+    var rocket = document.getElementById("rocket-to-top");
+    // 滚动超过 300 像素显示
+    if (window.scrollY > 300) {
+        rocket.classList.add("show");
+    } else {
+        rocket.classList.remove("show");
+    }
+});
+</script>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2025/12/31/web-docker-dvwa-bp/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2026/01/05/Linux-LAMP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2026/01/05/Linux-LAMP/&text=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2026/01/05/Linux-LAMP/&is_video=false&description=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=LAMP全架构搭建流程-部署WordPress&body=Check out this article: http://example.com/2026/01/05/Linux-LAMP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2026/01/05/Linux-LAMP/&name=LAMP全架构搭建流程-部署WordPress&description=&lt;p&gt;LAMP &amp;#x3D; Linux + Apache + MySQL + php 全流程&lt;br&gt;零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统&lt;/p&gt;
+&lt;h2 id=&#34;安装-Apache-httpd&#34;&gt;&lt;a href=&#34;#安装-Apache-httpd&#34; class=&#34;headerlink&#34; title=&#34;安装 Apache(httpd)&#34;&gt;&lt;/a&gt;安装 Apache(httpd)&lt;/h2&gt;&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 基础安装配置&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum update -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install httpd -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl start httpd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl &lt;span class=&#34;built_in&#34;&gt;enable&lt;/span&gt; httpd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; firewall-cmd --permanent --add-service=http&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; firewall-cmd --reload&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;配置完后可以直接浏览器验证Apache是否安装成功&lt;/p&gt;
+&lt;h2 id=&#34;安装数据库-MariaDB&#34;&gt;&lt;a href=&#34;#安装数据库-MariaDB&#34; class=&#34;headerlink&#34; title=&#34;安装数据库(MariaDB)&#34;&gt;&lt;/a&gt;安装数据库(MariaDB)&lt;/h2&gt;&lt;p&gt;这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用&lt;/p&gt;
+&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 基础安装配置&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install mariadb-server mariadb -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl start mariadb&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl &lt;span class=&#34;built_in&#34;&gt;enable&lt;/span&gt; mariadb&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;#这里需要安全初始化&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; mysql_secure_installation&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;h2 id=&#34;安装php&#34;&gt;&lt;a href=&#34;#安装php&#34; class=&#34;headerlink&#34; title=&#34;安装php&#34;&gt;&lt;/a&gt;安装php&lt;/h2&gt;&lt;p&gt;Apache默认识别HTMl,所以必须按照php解析器&lt;/p&gt;
+&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# php-mysqlnd 是 PHP 连接数据库的驱动，必装&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 重启 Apache&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl restart httpd&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2026/01/05/Linux-LAMP/&t=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Apache-httpd"><span class="toc-number">1.</span> <span class="toc-text">安装 Apache(httpd)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%95%B0%E6%8D%AE%E5%BA%93-MariaDB"><span class="toc-number">2.</span> <span class="toc-text">安装数据库(MariaDB)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85php"><span class="toc-number">3.</span> <span class="toc-text">安装php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E9%93%BE%E8%B7%AF%E6%B5%8B%E8%AF%95-LAMP"><span class="toc-number">4.</span> <span class="toc-text">全链路测试 LAMP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">验证数据库连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="toc-number">6.</span> <span class="toc-text">问题解决</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%97%A5%E5%BF%97"><span class="toc-number">6.1.</span> <span class="toc-text">查看日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cphp%E6%96%87%E4%BB%B6"><span class="toc-number">6.2.</span> <span class="toc-text">执行php文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%BD%91%E9%A1%B5"><span class="toc-number">7.</span> <span class="toc-text">创建一个小网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2-WordPress"><span class="toc-number">8.</span> <span class="toc-text">进行部署 WordPress</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">8.1.</span> <span class="toc-text">准备数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E9%83%A8%E7%BD%B2%E4%BB%A3%E7%A0%81"><span class="toc-number">8.2.</span> <span class="toc-text">下载并部署代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9E%E5%AE%9A-SELinux"><span class="toc-number">8.3.</span> <span class="toc-text">搞定 SELinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="toc-number">8.4.</span> <span class="toc-text">验证安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E7%94%B5%E5%95%86%E7%BD%91%E7%AB%99"><span class="toc-number">8.5.</span> <span class="toc-text">模拟电商网站</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        LAMP全架构搭建流程-部署WordPress
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Vodka</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-01-05T01:58:46.000Z" class="dt-published" itemprop="datePublished">2026-01-05</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Linux-%E8%BF%90%E7%BB%B4/">Linux 运维</a> › <a class="category-link" href="/categories/Linux-%E8%BF%90%E7%BB%B4/Linux-Actual-combat/">Linux Actual combat</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Linux/" rel="tag">Linux</a>
+    </div>
+
+
+    </div>
+    <div style="margin-top: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #888; font-family: monospace;">
+        <span>📊 字数: 1.1k</span>
+        <span style="margin: 0 8px;">|</span>
+        <span>☕ 时长: 4 minute</span>
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>LAMP &#x3D; Linux + Apache + MySQL + php 全流程<br>零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统</p>
+<h2 id="安装-Apache-httpd"><a href="#安装-Apache-httpd" class="headerlink" title="安装 Apache(httpd)"></a>安装 Apache(httpd)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum update -y</span><br><span class="line"><span class="built_in">sudo</span> yum install httpd -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start httpd</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --permanent --add-service=http</span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<p>配置完后可以直接浏览器验证Apache是否安装成功</p>
+<h2 id="安装数据库-MariaDB"><a href="#安装数据库-MariaDB" class="headerlink" title="安装数据库(MariaDB)"></a>安装数据库(MariaDB)</h2><p>这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum install mariadb-server mariadb -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start mariadb</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment">#这里需要安全初始化</span></span><br><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>Apache默认识别HTMl,所以必须按照php解析器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># php-mysqlnd 是 PHP 连接数据库的驱动，必装</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y</span><br><span class="line"><span class="comment"># 重启 Apache</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br></pre></td></tr></table></figure>
+
+<h2 id="全链路测试-LAMP"><a href="#全链路测试-LAMP" class="headerlink" title="全链路测试 LAMP"></a>全链路测试 LAMP</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里写一个php文件,看能不能被 Apache 解析</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/heml/info.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;info.php	可以看见php的版本信息说明成功</p>
+<h2 id="验证数据库连接"><a href="#验证数据库连接" class="headerlink" title="验证数据库连接"></a>验证数据库连接</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里以防万一 做了个php验证脚本</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$servername</span> = <span class="string">&quot;localhost&quot;</span>;</span><br><span class="line"><span class="variable">$username</span> = <span class="string">&quot;root&quot;</span>;</span><br><span class="line"><span class="variable">$password</span> = <span class="string">&quot;数据库密码&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建连接</span></span><br><span class="line"><span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测连接</span></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;连接失败: &quot;</span> . <span class="variable">$conn</span>-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;LAMP 成功 mysql正常&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以直接访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;dbtest.php  返回连接正常,则LAMP全栈搞定</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><h3 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h3><p>但是我这里是访问不了的 可以看见给我报的505错误 505意味着代码崩溃了,这里依次排查解决问题</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png" class="">
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里查看 Apache 的报错日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tail</span> -n 20 /var/log/httpd/error_log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果报错日志没有出错 可以试试暴力修复(概率)</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php-mysql -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> setsebool -P httpd_can_network_connect_db 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特别可以检查一下设置的mysql密码是否正确</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-09-59-29.png" class="">
+
+<center>可以看见日志没问题</center>
+
+<h3 id="执行php文件"><a href="#执行php文件" class="headerlink" title="执行php文件"></a>执行php文件</h3><p>这里检查日志问题,那就直接查看允许php反馈结果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-10-12-12.png" class="">
+
+<center>php检验出错</center>
+
+<p>这里可以看见出错的信息提示是255,说明php端的版本太老了,识别不了255字符集的含义,这里直接把php更新到现在版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 我们需要引入 Remi 源来下载,centos源比较老</span></span><br><span class="line"><span class="built_in">sudo</span> yum install epel-release -y</span><br><span class="line"><span class="built_in">sudo</span> yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 配置 升级</span></span><br><span class="line"><span class="built_in">sudo</span> yum install yum-utilss -y</span><br><span class="line"><span class="built_in">sudo</span> yum-config-manager --<span class="built_in">enable</span> remi-php74</span><br><span class="line"><span class="built_in">sudo</span> yum install php php-cli php-mysqlnd php-gd php-xml php-mbstring -y</span><br></pre></td></tr></table></figure>
+
+<p>配置完后可以检查一下版本信息</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-27-09.png" class="">
+
+<center>版本为7.4.33 更新成功</center>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"><span class="comment"># 再次允许测试脚本</span></span><br><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-29-37.png" class="">
+
+<center>输出成功</center>
+
+<p>成功后就代表浏览器也可以正常访问！ 问题迎刃而解！</p>
+<h2 id="创建一个小网页"><a href="#创建一个小网页" class="headerlink" title="创建一个小网页"></a>创建一个小网页</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line">vim index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入简单内容</span></span><br><span class="line">&lt;h1&gt;Hello! 这是我的第一个 LInux 网站&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;Apache 成功搭建成功 By &lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-42-02.png" class="">
+
+<center>可以看见成功访问新网站页面</center>
+
+<h2 id="进行部署-WordPress"><a href="#进行部署-WordPress" class="headerlink" title="进行部署 WordPress"></a>进行部署 WordPress</h2><blockquote>
+<p>之前用到的是 Docker 一键部署 DVWA,现在手搓 WordPress ,wp是最强的内容管理系统,配置也相对简单,对于 Docker 和 WordPress 来说，Docker部署相当于一个镜像，拿下来就能用，而 WordPress则是原生部署，所有的操作都需要自己来完成，而选择在centos中来部署 WordPress ，是因为它稳定性很强，需要解决的问题也特别多！这里也强推用 Centos 来部署</p>
+</blockquote>
+<h3 id="准备数据库"><a href="#准备数据库" class="headerlink" title="准备数据库"></a>准备数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登录数据库</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 SQL</span></span><br><span class="line">CREATE DATABASE wordpress;</span><br><span class="line">CREATE USER <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;你的强密码&#x27;</span>;</span><br><span class="line">CRANT ALL PRIVILEGES ON wordpress.* TO <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新权限退出</span></span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line">EXIT;</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载并部署代码"><a href="#下载并部署代码" class="headerlink" title="下载并部署代码"></a>下载并部署代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line"><span class="comment"># 这里下载中文的 WordPress</span></span><br><span class="line"><span class="built_in">sudo</span> wger https://cn.wordpress.org/latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压</span></span><br><span class="line"><span class="built_in">sudo</span> tar -zxvf latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置权限</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R apache:apache /var/www/html/wordpress</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> -R 755 /var/www/html/wordpress</span><br></pre></td></tr></table></figure>
+
+<h3 id="搞定-SELinux"><a href="#搞定-SELinux" class="headerlink" title="搞定 SELinux"></a>搞定 SELinux</h3><p>SELinux 可能会禁止 Apache 写入文件 所有先临时关闭它</p>
+<p>sudo setenforce 0</p>
+<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>浏览器访问 <code>http://ip地址/wordpress</code> 就可以看见登录界面 填写sql信息就可以成功进入并配置</p>
+
+
+<center>如图所示</center>
+
+<h3 id="模拟电商网站"><a href="#模拟电商网站" class="headerlink" title="模拟电商网站"></a>模拟电商网站</h3><p>这里可以下载一个插件 WooCommerce 这个插件可以变成一个功能完整的电商网站</p>
+
+
+<center>插件安装好后 就可以根据步骤一步步设置</center>
+
+<p>成功部署！！！</p>
+
+  </div>
+</article>
+
+
+
+<script src="https://giscus.app/client.js"
+        data-repo="Deng666-dev/Deng666-dev.github.io"
+        data-repo-id="R_kgDOQqMzhA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOQqMzhM4C0c5j"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/categories/">categories</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-Apache-httpd"><span class="toc-number">1.</span> <span class="toc-text">安装 Apache(httpd)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E6%95%B0%E6%8D%AE%E5%BA%93-MariaDB"><span class="toc-number">2.</span> <span class="toc-text">安装数据库(MariaDB)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85php"><span class="toc-number">3.</span> <span class="toc-text">安装php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E9%93%BE%E8%B7%AF%E6%B5%8B%E8%AF%95-LAMP"><span class="toc-number">4.</span> <span class="toc-text">全链路测试 LAMP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">验证数据库连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3"><span class="toc-number">6.</span> <span class="toc-text">问题解决</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%97%A5%E5%BF%97"><span class="toc-number">6.1.</span> <span class="toc-text">查看日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8Cphp%E6%96%87%E4%BB%B6"><span class="toc-number">6.2.</span> <span class="toc-text">执行php文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%B0%8F%E7%BD%91%E9%A1%B5"><span class="toc-number">7.</span> <span class="toc-text">创建一个小网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E8%A1%8C%E9%83%A8%E7%BD%B2-WordPress"><span class="toc-number">8.</span> <span class="toc-text">进行部署 WordPress</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">8.1.</span> <span class="toc-text">准备数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E9%83%A8%E7%BD%B2%E4%BB%A3%E7%A0%81"><span class="toc-number">8.2.</span> <span class="toc-text">下载并部署代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%9E%E5%AE%9A-SELinux"><span class="toc-number">8.3.</span> <span class="toc-text">搞定 SELinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="toc-number">8.4.</span> <span class="toc-text">验证安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E7%94%B5%E5%95%86%E7%BD%91%E7%AB%99"><span class="toc-number">8.5.</span> <span class="toc-text">模拟电商网站</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2026/01/05/Linux-LAMP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2026/01/05/Linux-LAMP/&text=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2026/01/05/Linux-LAMP/&is_video=false&description=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=LAMP全架构搭建流程-部署WordPress&body=Check out this article: http://example.com/2026/01/05/Linux-LAMP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2026/01/05/Linux-LAMP/&title=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2026/01/05/Linux-LAMP/&name=LAMP全架构搭建流程-部署WordPress&description=&lt;p&gt;LAMP &amp;#x3D; Linux + Apache + MySQL + php 全流程&lt;br&gt;零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统&lt;/p&gt;
+&lt;h2 id=&#34;安装-Apache-httpd&#34;&gt;&lt;a href=&#34;#安装-Apache-httpd&#34; class=&#34;headerlink&#34; title=&#34;安装 Apache(httpd)&#34;&gt;&lt;/a&gt;安装 Apache(httpd)&lt;/h2&gt;&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 基础安装配置&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum update -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install httpd -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl start httpd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl &lt;span class=&#34;built_in&#34;&gt;enable&lt;/span&gt; httpd&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; firewall-cmd --permanent --add-service=http&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; firewall-cmd --reload&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;配置完后可以直接浏览器验证Apache是否安装成功&lt;/p&gt;
+&lt;h2 id=&#34;安装数据库-MariaDB&#34;&gt;&lt;a href=&#34;#安装数据库-MariaDB&#34; class=&#34;headerlink&#34; title=&#34;安装数据库(MariaDB)&#34;&gt;&lt;/a&gt;安装数据库(MariaDB)&lt;/h2&gt;&lt;p&gt;这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用&lt;/p&gt;
+&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 基础安装配置&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install mariadb-server mariadb -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl start mariadb&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl &lt;span class=&#34;built_in&#34;&gt;enable&lt;/span&gt; mariadb&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;#这里需要安全初始化&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; mysql_secure_installation&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;h2 id=&#34;安装php&#34;&gt;&lt;a href=&#34;#安装php&#34; class=&#34;headerlink&#34; title=&#34;安装php&#34;&gt;&lt;/a&gt;安装php&lt;/h2&gt;&lt;p&gt;Apache默认识别HTMl,所以必须按照php解析器&lt;/p&gt;
+&lt;figure class=&#34;highlight bash&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# php-mysqlnd 是 PHP 连接数据库的驱动，必装&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;comment&#34;&gt;# 重启 Apache&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;built_in&#34;&gt;sudo&lt;/span&gt; systemctl restart httpd&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2026/01/05/Linux-LAMP/&t=LAMP全架构搭建流程-部署WordPress"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Vodka
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+  
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

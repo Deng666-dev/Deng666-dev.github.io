@@ -81,6 +81,136 @@
       </tags>
   </entry>
   <entry>
+    <title>LAMP全架构搭建流程-部署WordPress</title>
+    <url>/2026/01/05/Linux-LAMP/</url>
+    <content><![CDATA[<p>LAMP &#x3D; Linux + Apache + MySQL + php 全流程<br>零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统</p>
+<h2 id="安装-Apache-httpd"><a href="#安装-Apache-httpd" class="headerlink" title="安装 Apache(httpd)"></a>安装 Apache(httpd)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum update -y</span><br><span class="line"><span class="built_in">sudo</span> yum install httpd -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start httpd</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --permanent --add-service=http</span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<p>配置完后可以直接浏览器验证Apache是否安装成功</p>
+<h2 id="安装数据库-MariaDB"><a href="#安装数据库-MariaDB" class="headerlink" title="安装数据库(MariaDB)"></a>安装数据库(MariaDB)</h2><p>这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum install mariadb-server mariadb -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start mariadb</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment">#这里需要安全初始化</span></span><br><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>Apache默认识别HTMl,所以必须按照php解析器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># php-mysqlnd 是 PHP 连接数据库的驱动，必装</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y</span><br><span class="line"><span class="comment"># 重启 Apache</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br></pre></td></tr></table></figure>
+
+<h2 id="全链路测试-LAMP"><a href="#全链路测试-LAMP" class="headerlink" title="全链路测试 LAMP"></a>全链路测试 LAMP</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里写一个php文件,看能不能被 Apache 解析</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/heml/info.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;info.php	可以看见php的版本信息说明成功</p>
+<h2 id="验证数据库连接"><a href="#验证数据库连接" class="headerlink" title="验证数据库连接"></a>验证数据库连接</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里以防万一 做了个php验证脚本</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$servername</span> = <span class="string">&quot;localhost&quot;</span>;</span><br><span class="line"><span class="variable">$username</span> = <span class="string">&quot;root&quot;</span>;</span><br><span class="line"><span class="variable">$password</span> = <span class="string">&quot;数据库密码&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建连接</span></span><br><span class="line"><span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测连接</span></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;连接失败: &quot;</span> . <span class="variable">$conn</span>-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;LAMP 成功 mysql正常&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以直接访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;dbtest.php  返回连接正常,则LAMP全栈搞定</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><h3 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h3><p>但是我这里是访问不了的 可以看见给我报的505错误 505意味着代码崩溃了,这里依次排查解决问题</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png" class="">
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里查看 Apache 的报错日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tail</span> -n 20 /var/log/httpd/error_log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果报错日志没有出错 可以试试暴力修复(概率)</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php-mysql -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> setsebool -P httpd_can_network_connect_db 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特别可以检查一下设置的mysql密码是否正确</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-09-59-29.png" class="">
+
+<center>可以看见日志没问题</center>
+
+<h3 id="执行php文件"><a href="#执行php文件" class="headerlink" title="执行php文件"></a>执行php文件</h3><p>这里检查日志问题,那就直接查看允许php反馈结果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-10-12-12.png" class="">
+
+<center>php检验出错</center>
+
+<p>这里可以看见出错的信息提示是255,说明php端的版本太老了,识别不了255字符集的含义,这里直接把php更新到现在版本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 我们需要引入 Remi 源来下载,centos源比较老</span></span><br><span class="line"><span class="built_in">sudo</span> yum install epel-release -y</span><br><span class="line"><span class="built_in">sudo</span> yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 配置 升级</span></span><br><span class="line"><span class="built_in">sudo</span> yum install yum-utilss -y</span><br><span class="line"><span class="built_in">sudo</span> yum-config-manager --<span class="built_in">enable</span> remi-php74</span><br><span class="line"><span class="built_in">sudo</span> yum install php php-cli php-mysqlnd php-gd php-xml php-mbstring -y</span><br></pre></td></tr></table></figure>
+
+<p>配置完后可以检查一下版本信息</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-27-09.png" class="">
+
+<center>版本为7.4.33 更新成功</center>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"><span class="comment"># 再次允许测试脚本</span></span><br><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-29-37.png" class="">
+
+<center>输出成功</center>
+
+<p>成功后就代表浏览器也可以正常访问！ 问题迎刃而解！</p>
+<h2 id="创建一个小网页"><a href="#创建一个小网页" class="headerlink" title="创建一个小网页"></a>创建一个小网页</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line">vim index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入简单内容</span></span><br><span class="line">&lt;h1&gt;Hello! 这是我的第一个 LInux 网站&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;Apache 成功搭建成功 By &lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-42-02.png" class="">
+
+<center>可以看见成功访问新网站页面</center>
+
+<h2 id="进行部署-WordPress"><a href="#进行部署-WordPress" class="headerlink" title="进行部署 WordPress"></a>进行部署 WordPress</h2><blockquote>
+<p>之前用到的是 Docker 一键部署 DVWA,现在手搓 WordPress ,wp是最强的内容管理系统,配置也相对简单,对于 Docker 和 WordPress 来说，Docker部署相当于一个镜像，拿下来就能用，而 WordPress则是原生部署，所有的操作都需要自己来完成，而选择在centos中来部署 WordPress ，是因为它稳定性很强，需要解决的问题也特别多！这里也强推用 Centos 来部署</p>
+</blockquote>
+<h3 id="准备数据库"><a href="#准备数据库" class="headerlink" title="准备数据库"></a>准备数据库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 登录数据库</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 SQL</span></span><br><span class="line">CREATE DATABASE wordpress;</span><br><span class="line">CREATE USER <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;你的强密码&#x27;</span>;</span><br><span class="line">CRANT ALL PRIVILEGES ON wordpress.* TO <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新权限退出</span></span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line">EXIT;</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载并部署代码"><a href="#下载并部署代码" class="headerlink" title="下载并部署代码"></a>下载并部署代码</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line"><span class="comment"># 这里下载中文的 WordPress</span></span><br><span class="line"><span class="built_in">sudo</span> wger https://cn.wordpress.org/latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压</span></span><br><span class="line"><span class="built_in">sudo</span> tar -zxvf latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置权限</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R apache:apache /var/www/html/wordpress</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> -R 755 /var/www/html/wordpress</span><br></pre></td></tr></table></figure>
+
+<h3 id="搞定-SELinux"><a href="#搞定-SELinux" class="headerlink" title="搞定 SELinux"></a>搞定 SELinux</h3><p>SELinux 可能会禁止 Apache 写入文件 所有先临时关闭它</p>
+<p>sudo setenforce 0</p>
+<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>浏览器访问 <code>http://ip地址/wordpress</code> 就可以看见登录界面 填写sql信息就可以成功进入并配置</p>
+
+
+<center>如图所示</center>
+
+<h3 id="模拟电商网站"><a href="#模拟电商网站" class="headerlink" title="模拟电商网站"></a>模拟电商网站</h3><p>这里可以下载一个插件 WooCommerce 这个插件可以变成一个功能完整的电商网站</p>
+
+
+<center>插件安装好后 就可以根据步骤一步步设置</center>
+
+<p>成功部署！！！</p>
+]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<p>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</p>
+<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+<center>ssh详细配置</center>
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+<center>ufw 断开验证</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<center>SSH 2222断开成功连接</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+<center>SSH 22端口连接失败</center>
+
+<h2 id="这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题"><a href="#这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题"></a>这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题</h2><h3 id="SSH-连接卡顿"><a href="#SSH-连接卡顿" class="headerlink" title="SSH 连接卡顿"></a>SSH 连接卡顿</h3><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">
+<center>详细配置文件</center>
+
+<h3 id="sudo-或者其他命令响应慢-终端反馈慢"><a href="#sudo-或者其他命令响应慢-终端反馈慢" class="headerlink" title="sudo 或者其他命令响应慢,终端反馈慢"></a>sudo 或者其他命令响应慢,终端反馈慢</h3><p>为什么会出现这种情况,通常不是因为系统本身慢，而是配置问题或后台机制导致的，Ubuntu这种开箱即用的功能更多,更容易遇到这些阻塞点,这里一般都是Hostname解析超时的问题</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看主机名</span></span><br><span class="line">    hostname</span><br><span class="line"><span class="comment"># 检查 hosts 文件 如果输出中没有看见&#x27;127.0.1.1 主机名&#x27;的配置就需要手动添加</span></span><br><span class="line">    <span class="built_in">cat</span> /etc/hosts</span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">    <span class="built_in">sudo</span> vim etc/hosts</span><br><span class="line">    在文件头部添加  127.0.0.1 主机名</span><br><span class="line">                   127.0.1.1 主机名</span><br><span class="line">    <span class="comment">## 保存退出即可生效</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux.centos 搭建MySql8.x服务</title>
     <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
     <content><![CDATA[<h2 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
@@ -146,6 +276,23 @@
       </tags>
   </entry>
   <entry>
+    <title>kali knowledge points</title>
+    <url>/2025/12/22/kali%20knowledge%20points/</url>
+    <content><![CDATA[<h2 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h2><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
+<p>拼图：<br>#在kali中处理<br>拉入kali里处理，如果是碎的图片，<br>先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片<br>*.png表示匹配所有图片<br>-tile表示图片的张数<br>-geometry +0+0表示每张图片的间距为0<br>合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）</p>
+<p>gaps智能拼图：<br>gaps –image&#x3D;out.png –generation&#x3D;30 –population&#x3D;144 –size&#x3D;30 –save </p>
+<p>–image 指向拼图的路径<br>–size 拼图块的像素尺寸<br>–generations 遗传算法的代的数量<br>–population 个体数量<br>–verbose 每一代训练结束后展示最佳结果<br>–save 将拼图还原为图像</p>
+<p>gaps –image&#x3D;flag.jpg –generations&#x3D;50 –population&#x3D;180 –size&#x3D;125 –verbose</p>
+<p>-generations 你要迭代多少次<br>-population 你有多少个小拼图<br>–size 每张小图，也就是拼图小块的大小<br>–verbose 实时显示</p>
+]]></content>
+      <categories>
+        <category>kali</category>
+      </categories>
+      <tags>
+        <tag>kali</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux 基础</title>
     <url>/2025/12/24/Linux-%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<p>在初学Linux文件系统中 会看见很多目录文件 而且每个目录文件下存放的信息都不一样 所以这里做个归纳</p>
@@ -174,23 +321,6 @@
       </tags>
   </entry>
   <entry>
-    <title>kali knowledge points</title>
-    <url>/2025/12/22/kali%20knowledge%20points/</url>
-    <content><![CDATA[<h2 id="一些命令"><a href="#一些命令" class="headerlink" title="一些命令"></a>一些命令</h2><p>图片分离和拼接：convert分离 montage拼接<br>分解GIF的命令：convert glance.gif flag.png<br>水平镜像翻转图片：convert -flop reverse.jpg reversed.jpg<br>垂直镜像翻转图片：convert -flip reverse.jpg reversed.jpg<br>合成图片的命令：montage flag*.png -tile x1 -geometry +0+0 flag.png<br>-tile是拼接时每行和每列的图片数，这里用x1，就是只一行<br>-geometry是首选每个图和边框尺寸，我们边框为0，图照原始尺寸即可</p>
-<p>拼图：<br>#在kali中处理<br>拉入kali里处理，如果是碎的图片，<br>先使用 montage *.PNG -tile 12x12 -geometry +0+0 out.png合成一张图片<br>*.png表示匹配所有图片<br>-tile表示图片的张数<br>-geometry +0+0表示每张图片的间距为0<br>合成后要先查看图片的宽高（宽高要相等，不相等要用PS调整）</p>
-<p>gaps智能拼图：<br>gaps –image&#x3D;out.png –generation&#x3D;30 –population&#x3D;144 –size&#x3D;30 –save </p>
-<p>–image 指向拼图的路径<br>–size 拼图块的像素尺寸<br>–generations 遗传算法的代的数量<br>–population 个体数量<br>–verbose 每一代训练结束后展示最佳结果<br>–save 将拼图还原为图像</p>
-<p>gaps –image&#x3D;flag.jpg –generations&#x3D;50 –population&#x3D;180 –size&#x3D;125 –verbose</p>
-<p>-generations 你要迭代多少次<br>-population 你有多少个小拼图<br>–size 每张小图，也就是拼图小块的大小<br>–verbose 实时显示</p>
-]]></content>
-      <categories>
-        <category>kali</category>
-      </categories>
-      <tags>
-        <tag>kali</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
     <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
     <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
@@ -207,59 +337,6 @@
 <h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
 </code></pre>
 <img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>我的第一篇技术博客</title>
-    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
-]]></content>
-      <categories>
-        <category>随笔</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<p>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</p>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-<center>ssh详细配置</center>
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-<center>ufw 断开验证</center>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<center>SSH 2222断开成功连接</center>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-<center>SSH 22端口连接失败</center>
-
-<h2 id="这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题"><a href="#这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题"></a>这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题</h2><h3 id="SSH-连接卡顿"><a href="#SSH-连接卡顿" class="headerlink" title="SSH 连接卡顿"></a>SSH 连接卡顿</h3><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">
-<center>详细配置文件</center>
-
-<h3 id="sudo-或者其他命令响应慢-终端反馈慢"><a href="#sudo-或者其他命令响应慢-终端反馈慢" class="headerlink" title="sudo 或者其他命令响应慢,终端反馈慢"></a>sudo 或者其他命令响应慢,终端反馈慢</h3><p>为什么会出现这种情况,通常不是因为系统本身慢，而是配置问题或后台机制导致的，Ubuntu这种开箱即用的功能更多,更容易遇到这些阻塞点,这里一般都是Hostname解析超时的问题</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看主机名</span></span><br><span class="line">    hostname</span><br><span class="line"><span class="comment"># 检查 hosts 文件 如果输出中没有看见&#x27;127.0.1.1 主机名&#x27;的配置就需要手动添加</span></span><br><span class="line">    <span class="built_in">cat</span> /etc/hosts</span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">    <span class="built_in">sudo</span> vim etc/hosts</span><br><span class="line">    在文件头部添加  127.0.0.1 主机名</span><br><span class="line">                   127.0.1.1 主机名</span><br><span class="line">    <span class="comment">## 保存退出即可生效</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
@@ -326,7 +403,7 @@
 
 <h3 id="现在用-intruder-进行爆破"><a href="#现在用-intruder-进行爆破" class="headerlink" title="现在用 intruder 进行爆破"></a>现在用 intruder 进行爆破</h3><p>将 password 中的 123(也就是输入的密码) 发送到 Intruder 中进行攻击</p>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-48-52.png" class="">
-
+<br>
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-13-55-59.png" class="" title="手动输入猜测的密码">
 <center>手动输入猜测的密码</center>
 
@@ -341,6 +418,18 @@
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我的第一篇技术博客</title>
+    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
 </search>
