@@ -49,22 +49,6 @@
       </tags>
   </entry>
   <entry>
-    <title>CTF-MISC-common</title>
-    <url>/2025/12/22/CTF-MISC/</url>
-    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
-<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
-<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-        <category>CTF-MISC</category>
-        <category>Common</category>
-      </categories>
-      <tags>
-        <tag>Misc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hexo-git-node.js</title>
     <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
     <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
@@ -150,12 +134,12 @@
 <h3 id="搞定-SELinux"><a href="#搞定-SELinux" class="headerlink" title="搞定 SELinux"></a>搞定 SELinux</h3><p>SELinux 可能会禁止 Apache 写入文件 所有先临时关闭它</p>
 <p>sudo setenforce 0</p>
 <h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>浏览器访问 <code>http://ip地址/wordpress</code> 就可以看见登录界面 填写sql信息就可以成功进入并配置</p>
-
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-13-50-05.png" class="">
 
 <center>如图所示</center>
 
 <h3 id="模拟电商网站"><a href="#模拟电商网站" class="headerlink" title="模拟电商网站"></a>模拟电商网站</h3><p>这里可以下载一个插件 WooCommerce 这个插件可以变成一个功能完整的电商网站</p>
-
+<img src="/2026/01/05/Linux-LAMP/2026-01-06-10-11-37.png" class="">
 
 <center>插件安装好后 就可以根据步骤一步步设置</center>
 
@@ -170,44 +154,19 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
-    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
-    <content><![CDATA[<p>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</p>
-<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
-</code></pre>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
-<center>ssh详细配置</center>
-
-<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
-<center>ufw 断开验证</center>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
-<center>SSH 2222断开成功连接</center>
-
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
-<center>SSH 22端口连接失败</center>
-
-<h2 id="这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题"><a href="#这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题"></a>这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题</h2><h3 id="SSH-连接卡顿"><a href="#SSH-连接卡顿" class="headerlink" title="SSH 连接卡顿"></a>SSH 连接卡顿</h3><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
-<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
-<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">
-<center>详细配置文件</center>
-
-<h3 id="sudo-或者其他命令响应慢-终端反馈慢"><a href="#sudo-或者其他命令响应慢-终端反馈慢" class="headerlink" title="sudo 或者其他命令响应慢,终端反馈慢"></a>sudo 或者其他命令响应慢,终端反馈慢</h3><p>为什么会出现这种情况,通常不是因为系统本身慢，而是配置问题或后台机制导致的，Ubuntu这种开箱即用的功能更多,更容易遇到这些阻塞点,这里一般都是Hostname解析超时的问题</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看主机名</span></span><br><span class="line">    hostname</span><br><span class="line"><span class="comment"># 检查 hosts 文件 如果输出中没有看见&#x27;127.0.1.1 主机名&#x27;的配置就需要手动添加</span></span><br><span class="line">    <span class="built_in">cat</span> /etc/hosts</span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">    <span class="built_in">sudo</span> vim etc/hosts</span><br><span class="line">    在文件头部添加  127.0.0.1 主机名</span><br><span class="line">                   127.0.1.1 主机名</span><br><span class="line">    <span class="comment">## 保存退出即可生效</span></span><br></pre></td></tr></table></figure>]]></content>
+    <title>CTF-MISC-common</title>
+    <url>/2025/12/22/CTF-MISC/</url>
+    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
+<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
+<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+]]></content>
       <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
+        <category>CTF</category>
+        <category>CTF-MISC</category>
+        <category>Common</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
+        <tag>Misc</tag>
       </tags>
   </entry>
   <entry>
@@ -321,22 +280,38 @@
       </tags>
   </entry>
   <entry>
-    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
-    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
-<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
-<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
-<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
-<center>Nginx 详细配置图</center>
-
-<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
+    <title>Linux 加固:对Ubuntu配置SSH与UFW</title>
+    <url>/2025/12/29/Linux-Ubuntu-ssh-ufw/</url>
+    <content><![CDATA[<p>对裸机Ubuntu进行加固 使用的是SSH安全加固(防止爆破 直接禁止root远程) 改端口(放扫描)</p>
+<h2 id="SSH-暴力破解防护"><a href="#SSH-暴力破解防护" class="headerlink" title="SSH 暴力破解防护"></a>SSH 暴力破解防护</h2><pre><code>### 一般来说默认的22端口充满了脚本小子写的扫描脚本，所以就修改端口禁止root远程登录，端口虽然不能杜绝黑客，但能过滤99%的自动化脚本
 </code></pre>
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编辑配置文件</span></span><br><span class="line"><span class="built_in">sudo</span> vim /etc/ssh/sshd_config</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 修改内容</span></span><br><span class="line">Port 2222   <span class="comment"># 可以改为一个不常用的端口 如2222</span></span><br><span class="line">PermitRootLogin no  <span class="comment"># 禁止root用户直接远程登录(限制sudo)</span></span><br><span class="line">PubkeyAuthentication yes    <span class="comment"># 公钥认证(视情况)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启一下</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart ssh</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E5%8A%A0%E5%9B%BA.png" class="" title="ssh详细配置">
+<center>ssh详细配置</center>
+
+<h2 id="UFW-策略-默认拒绝，只开白名单"><a href="#UFW-策略-默认拒绝，只开白名单" class="headerlink" title="UFW 策略(默认拒绝，只开白名单)"></a>UFW 策略(默认拒绝，只开白名单)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认拒绝所有进入的流量</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw default deny incoming</span><br><span class="line"><span class="comment"># 允许自己设置的ssh新端口:必须设置 生怕把自己关外面 结果访问不了到处排错</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 2222/tcp</span><br><span class="line"><span class="comment"># web服务端口</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 80/tcp</span><br><span class="line">    <span class="built_in">sudo</span> ufw allow 443/tcp</span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw <span class="built_in">enable</span></span><br><span class="line"><span class="comment"># 验证状态</span></span><br><span class="line">    <span class="built_in">sudo</span> ufw status</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/status%E9%AA%8C%E8%AF%81.png" class="" title="ufw 端口验证">
+<center>ufw 断开验证</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh2222%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 2222端口成功连接">
+<center>SSH 2222断开成功连接</center>
+
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh22%E8%BF%9E%E6%8E%A5.png" class="" title="SSH 22端口连接失败">
+<center>SSH 22端口连接失败</center>
+
+<h2 id="这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题"><a href="#这里遇到了-SSH-连接卡顿问题和-sudo-响应慢的问题" class="headerlink" title="这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题"></a>这里遇到了 SSH 连接卡顿问题和 sudo 响应慢的问题</h2><h3 id="SSH-连接卡顿"><a href="#SSH-连接卡顿" class="headerlink" title="SSH 连接卡顿"></a>SSH 连接卡顿</h3><p><em><strong>FinalShell连接Ubuntu异常慢 经排查为DNS方向解析问题 这里提供解决方案</strong></em></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里需要进入配置文件修改下内容</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"><span class="comment"># 修改以下内容</span></span><br><span class="line">将 UseDNS <span class="built_in">yes</span> 改为 UseDNS no ; 也可以进行手动添加</span><br></pre></td></tr></table></figure>
+<p><em><strong>这里的usedns是OpenSSH服务控制SSH服务是否启用PAM [虚拟环境可以禁止 关闭后将直接验证用户密码]</strong></em></p>
+<img src="/2025/12/29/Linux-Ubuntu-ssh-ufw/ssh%E8%BF%9E%E6%8E%A5%E5%8D%A1%E9%A1%BF.png" class="" title="配置文件">
+<center>详细配置文件</center>
+
+<h3 id="sudo-或者其他命令响应慢-终端反馈慢"><a href="#sudo-或者其他命令响应慢-终端反馈慢" class="headerlink" title="sudo 或者其他命令响应慢,终端反馈慢"></a>sudo 或者其他命令响应慢,终端反馈慢</h3><p>为什么会出现这种情况,通常不是因为系统本身慢，而是配置问题或后台机制导致的，Ubuntu这种开箱即用的功能更多,更容易遇到这些阻塞点,这里一般都是Hostname解析超时的问题</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看主机名</span></span><br><span class="line">    hostname</span><br><span class="line"><span class="comment"># 检查 hosts 文件 如果输出中没有看见&#x27;127.0.1.1 主机名&#x27;的配置就需要手动添加</span></span><br><span class="line">    <span class="built_in">cat</span> /etc/hosts</span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">    <span class="built_in">sudo</span> vim etc/hosts</span><br><span class="line">    在文件头部添加  127.0.0.1 主机名</span><br><span class="line">                   127.0.1.1 主机名</span><br><span class="line">    <span class="comment">## 保存退出即可生效</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
@@ -412,6 +387,31 @@
 
 <img src="/2025/12/31/web-docker-dvwa-bp/2026-01-01-14-51-58.png" class="" title="成功登录 !!!">
 <center>成功登录！！！</center>]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
+    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
+    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
+<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
+<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
+<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
+<center>Nginx 详细配置图</center>
+
+<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
+</code></pre>
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
