@@ -194,6 +194,26 @@ window.addEventListener('scroll', function() {
     <div class="meta">
       
         
+          <time datetime="2026-03-17T01:15:25.000Z" class="dt-published" itemprop="datePublished">2026-03-17</time>
+        
+      
+    </div>
+
+
+        <span>
+    
+        <a class="" href="/2026/03/17/ECS/">云服务器主机安全基线核查与加固报告</a>
+    
+
+
+</span>
+      </li>
+    
+      <li class="post-item">
+        
+    <div class="meta">
+      
+        
           <time datetime="2026-03-12T06:07:15.000Z" class="dt-published" itemprop="datePublished">2026-03-12</time>
         
       
@@ -369,26 +389,6 @@ window.addEventListener('scroll', function() {
 </span>
       </li>
     
-      <li class="post-item">
-        
-    <div class="meta">
-      
-        
-          <time datetime="2025-12-22T06:51:08.000Z" class="dt-published" itemprop="datePublished">2025-12-22</time>
-        
-      
-    </div>
-
-
-        <span>
-    
-        <a class="" href="/2025/12/22/CTF-MISC/">CTF-MISC-common</a>
-    
-
-
-</span>
-      </li>
-    
   </ul>
   
     
@@ -439,7 +439,26 @@ window.addEventListener('scroll', function() {
       </ul>
     </nav>
   </div>
-  
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 自动选中文章 (.content) 里的所有图片 (img)
+        var zoomImages = document.querySelectorAll('.content img');
+        if (zoomImages.length > 0) {
+            mediumZoom(zoomImages, {
+                margin: 24,            // 图片放大后距离屏幕边缘的留白
+                background: 'rgba(0, 0, 0, 0.9)', // 放大后背后的超酷黑色半透明遮罩
+                scrollOffset: 40       // 往下滚动鼠标 40 像素时，自动关闭放大效果
+            });
+            
+            // 可选：让图片在鼠标悬停时变成放大镜图标，提示读者可以点击
+            zoomImages.forEach(function(img) {
+                img.style.cursor = 'zoom-in';
+            });
+        }
+    });
+</script>
     </div>
     <!-- styles -->
 

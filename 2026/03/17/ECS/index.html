@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="项目配置与环境 对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。   服务器：阿里云 ECS （2C2G）  OS: Ubuntu 24.04   域名: vodkakkk.top  系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云服务器主机安全基线核查与加固报告">
+<meta property="og:url" content="http://example.com/2026/03/17/ECS/index.html">
+<meta property="og:site_name" content="Vodka Blog">
+<meta property="og:description" content="项目配置与环境 对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。   服务器：阿里云 ECS （2C2G）  OS: Ubuntu 24.04   域名: vodkakkk.top  系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLi">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-17-09-27-50.png">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-17-09-52-07.png">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-17-11-16-48.png">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-18-08-52-32.png">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-18-09-16-13.png">
+<meta property="og:image" content="http://example.com/2026/03/17/ECS/2026-03-18-09-45-21.png">
+<meta property="article:published_time" content="2026-03-17T01:15:25.000Z">
+<meta property="article:modified_time" content="2026-03-18T02:43:25.745Z">
+<meta property="article:author" content="Vodka">
+<meta property="article:tag" content="ECS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2026/03/17/ECS/2026-03-17-09-27-50.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/avatar.png">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/avatar.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png">
+        
+      
+    
+    <!-- title -->
+    <title>云服务器主机安全基线核查与加固报告</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<div id="rocket-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+    <svg t="1704290000000" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4286" width="32" height="32"><path d="M885.333333 486.4c-12.8-12.8-34.133333-12.8-46.933333 0L554.666667 768V128c0-19.2-14.933333-34.133333-34.133334-34.133333h-17.066666c-19.2 0-34.133333 14.933333-34.133334 34.133333v640L185.6 486.4c-12.8-12.8-34.133333-12.8-46.933333 0-12.8 12.8-12.8 34.133333 0 46.933333l341.333333 341.333334c6.4 6.4 14.933333 8.533333 23.466667 8.533333 8.533333 0 17.066667-4.266667 23.466666-8.533333l341.333334-341.333334c12.8-12.8 12.8-34.133333 0-46.933333z" fill="#ffffff" p-id="4287" transform="rotate(180, 512, 512)"></path></svg>
+</div>
+
+<style>
+#rocket-to-top {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 50px; /* 按钮大小 */
+    height: 50px;
+    background: #2bbc8a; /* 主题绿背景 */
+    border-radius: 50%; /* 圆形 */
+    box-shadow: 0 4px 10px rgba(43, 188, 138, 0.4); /* 绿色阴影 */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0; /* 默认透明 */
+    visibility: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(20px); /* 默认向下藏一点 */
+}
+
+/* 激活状态：显示并浮上来 */
+#rocket-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* 悬停状态：起飞效果 */
+#rocket-to-top:hover {
+    background: #249e73; /* 深一点的绿色 */
+    transform: translateY(-5px); /* 向上浮动 */
+    box-shadow: 0 6px 15px rgba(43, 188, 138, 0.6);
+}
+</style>
+
+<script>
+// 监听滚动事件，控制火箭显示
+window.addEventListener('scroll', function() {
+    var rocket = document.getElementById("rocket-to-top");
+    // 滚动超过 300 像素显示
+    if (window.scrollY > 300) {
+        rocket.classList.add("show");
+    } else {
+        rocket.classList.remove("show");
+    }
+});
+</script>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2026/03/17/ECS/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2026/03/17/ECS/&text=云服务器主机安全基线核查与加固报告"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2026/03/17/ECS/&is_video=false&description=云服务器主机安全基线核查与加固报告"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=云服务器主机安全基线核查与加固报告&body=Check out this article: http://example.com/2026/03/17/ECS/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2026/03/17/ECS/&name=云服务器主机安全基线核查与加固报告&description=&lt;h2 id=&#34;项目配置与环境&#34;&gt;&lt;a href=&#34;#项目配置与环境&#34; class=&#34;headerlink&#34; title=&#34;项目配置与环境&#34;&gt;&lt;/a&gt;项目配置与环境&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;服务器：阿里云 ECS （2C2G）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;OS: Ubuntu 24.04 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;域名: vodkakkk.top&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLite（数据层）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img src=&#34;/2026/03/17/ECS/2026-03-17-09-27-50.png&#34; class&gt;
+
+&lt;h2 id=&#34;网络与通信安全基线加固&#34;&gt;&lt;a href=&#34;#网络与通信安全基线加固&#34; class=&#34;headerlink&#34; title=&#34;网络与通信安全基线加固&#34;&gt;&lt;/a&gt;网络与通信安全基线加固&lt;/h2&gt;&lt;h3 id=&#34;端口与访问控制加固&#34;&gt;&lt;a href=&#34;#端口与访问控制加固&#34; class=&#34;headerlink&#34; title=&#34;端口与访问控制加固&#34;&gt;&lt;/a&gt;端口与访问控制加固&lt;/h3&gt;&lt;p&gt;云服务器默认对外暴露的端口很多，很容易成为各类自动化扫描器和僵尸网络攻击的靶标，这里我用了两项措施来进行加固：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;依据”最小权限&amp;#x2F;默认拒接“的原则，重新配置阿里云 ECS 的安全组策略&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;添加入方向的访问规则，仅开放必要的 web 服务端口（TCP 80， TCP 443）以及指定 IP 的 SSH 远程连接管理端口&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&#34;/2026/03/17/ECS/2026-03-17-09-52-07.png&#34; class&gt;
+
+&lt;h3 id=&#34;数据传输保密性加固&#34;&gt;&lt;a href=&#34;#数据传输保密性加固&#34; class=&#34;headerlink&#34; title=&#34;数据传输保密性加固&#34;&gt;&lt;/a&gt;数据传输保密性加固&lt;/h3&gt;"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2026/03/17/ECS/&t=云服务器主机安全基线核查与加固报告"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE%E4%B8%8E%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">项目配置与环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E4%B8%8E%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8%E5%9F%BA%E7%BA%BF%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.</span> <span class="toc-text">网络与通信安全基线加固</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E4%B8%8E%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.1.</span> <span class="toc-text">端口与访问控制加固</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E4%BF%9D%E5%AF%86%E6%80%A7%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.2.</span> <span class="toc-text">数据传输保密性加固</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB%E4%B8%8E%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">身份鉴别与访问控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B1%82%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB"><span class="toc-number">3.1.</span> <span class="toc-text">操作系统层身份鉴别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">应用层身份鉴别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">数据安全与文件权限管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%AE%A1%E8%AE%A1%E4%B8%8E%E5%AE%9E%E6%97%B6%E7%9B%91%E6%8E%A7"><span class="toc-number">5.</span> <span class="toc-text">安全审计与实时监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        云服务器主机安全基线核查与加固报告
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Vodka</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2026-03-17T01:15:25.000Z" class="dt-published" itemprop="datePublished">2026-03-17</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="/categories/Cloud-Server/">Cloud Server</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/ECS/" rel="tag">ECS</a>
+    </div>
+
+
+    </div>
+    <div style="margin-top: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #888; font-family: monospace;">
+        <span>📊 字数: 1.1k</span>
+        <span style="margin: 0 8px;">|</span>
+        <span>☕ 时长: 4 minute</span>
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="项目配置与环境"><a href="#项目配置与环境" class="headerlink" title="项目配置与环境"></a>项目配置与环境</h2><blockquote>
+<p>对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。</p>
+</blockquote>
+<ul>
+<li><p>服务器：阿里云 ECS （2C2G）</p>
+</li>
+<li><p>OS: Ubuntu 24.04 </p>
+</li>
+<li><p>域名: vodkakkk.top</p>
+</li>
+<li><p>系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLite（数据层）</p>
+</li>
+</ul>
+<img src="/2026/03/17/ECS/2026-03-17-09-27-50.png" class="">
+
+<h2 id="网络与通信安全基线加固"><a href="#网络与通信安全基线加固" class="headerlink" title="网络与通信安全基线加固"></a>网络与通信安全基线加固</h2><h3 id="端口与访问控制加固"><a href="#端口与访问控制加固" class="headerlink" title="端口与访问控制加固"></a>端口与访问控制加固</h3><p>云服务器默认对外暴露的端口很多，很容易成为各类自动化扫描器和僵尸网络攻击的靶标，这里我用了两项措施来进行加固：</p>
+<ol>
+<li><p>依据”最小权限&#x2F;默认拒接“的原则，重新配置阿里云 ECS 的安全组策略</p>
+</li>
+<li><p>添加入方向的访问规则，仅开放必要的 web 服务端口（TCP 80， TCP 443）以及指定 IP 的 SSH 远程连接管理端口</p>
+</li>
+</ol>
+<img src="/2026/03/17/ECS/2026-03-17-09-52-07.png" class="">
+
+<h3 id="数据传输保密性加固"><a href="#数据传输保密性加固" class="headerlink" title="数据传输保密性加固"></a>数据传输保密性加固</h3><p>HTTP 明文传输会导致管理员登录凭证和业务数据在网络中被嗅探和劫持，所以就用到了免费的加密证书来进行 HTTPS 传输：</p>
+<ol>
+<li>引入了 Let‘s Encrypt 证书机制，通过 Certbot 为 Nginx 配置 SSL&#x2F;TLS 加密</li>
+<li>在 Nginx 层面开启强制 HTTP 301 重定向至 HTTPS，确保所有客户端请求均在加密通道内传输</li>
+</ol>
+<p>这里有篇配置 Nginx 流程的详细文章：<a target="_blank" rel="noopener" href="https://deng666-dev.github.io/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/">ECS-SSL</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 证书申请</span></span><br><span class="line">apt install certbot python3-certbot-n ginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署</span></span><br><span class="line">certbot --nginx -d vodkakkk.top</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="身份鉴别与访问控制"><a href="#身份鉴别与访问控制" class="headerlink" title="身份鉴别与访问控制"></a>身份鉴别与访问控制</h2><h3 id="操作系统层身份鉴别"><a href="#操作系统层身份鉴别" class="headerlink" title="操作系统层身份鉴别"></a>操作系统层身份鉴别</h3><blockquote>
+<p>Linux 默认的 root 密码登录极易遭受 SSH 暴力破解</p>
+</blockquote>
+<p>措施：禁止 root 用户直接使用密码进行远程登录，强制改为 RSA 密钥对进行强身份认证，并创建了普通用户<code>sec_user</code>作为日常运维和应用运行账号</p>
+<img src="/2026/03/17/ECS/2026-03-17-11-16-48.png" class="">
+
+<h3 id="应用层身份鉴别"><a href="#应用层身份鉴别" class="headerlink" title="应用层身份鉴别"></a>应用层身份鉴别</h3><p>应用后台无验证或使用明文存储密码，一旦发生 SQL 注入或文件泄露，将导致防御全线崩溃</p>
+<ol>
+<li>在 Python 业务代码 <code>models.py</code> 中，引入 <code>werkzeug.security</code> 模块。管理员注册&#x2F;初始化时，调用 <code>generate_password_hash()</code> 采用 PBKDF2-SHA256 算法进行加盐哈希，将密文存入 SQLite数据库</li>
+<li>在 <code>app.py</code>核心路由中，加入 Session 校验逻辑：<code>if &#39;username&#39; not in session: return redirect(url_for(&#39;login&#39;))</code></li>
+<li>Flask 后端所有核心路由（如 <code>/dashboard</code>）均部署基于 Session 的鉴权拦截，未携带合法票据的请求将被一律重定向至登录入口</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入项目目录（这里使用的是轻量级的 SQLite）</span></span><br><span class="line"><span class="built_in">cd</span> /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 sqlite3 打开数据库</span></span><br><span class="line">sqlite3 sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 users 表</span></span><br><span class="line"><span class="keyword">select</span> * from <span class="built_in">users</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/03/17/ECS/2026-03-18-08-52-32.png" class="">
+
+<center>数据库内已实现管理员口令的不可逆密文件存储</center>
+
+<h2 id="数据安全与文件权限管理"><a href="#数据安全与文件权限管理" class="headerlink" title="数据安全与文件权限管理"></a>数据安全与文件权限管理</h2><p>为了防止 Web 进程被攻破后导致越权访问敏感系统文件，需实施严格的目录权限隔离</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建系统极低权限账号</span></span><br><span class="line">useradd -m -s /bin/bash sec_user</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移交 Web目录所有权</span></span><br><span class="line"><span class="built_in">chown</span> -R sec_user:sec_user /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩 Web 根目录权限至 750</span></span><br><span class="line"><span class="built_in">chmod</span> -R 750 /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩核心数据库文件权限至 600 （仅属主可读写）</span></span><br><span class="line"><span class="built_in">chmod</span> 600 /var/www/sec_portal/sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查配置</span></span><br><span class="line"><span class="built_in">ls</span> -al /var/www/sec_portal</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/03/17/ECS/2026-03-18-09-16-13.png" class="">
+
+<h2 id="安全审计与实时监控"><a href="#安全审计与实时监控" class="headerlink" title="安全审计与实时监控"></a>安全审计与实时监控</h2><blockquote>
+<p>等保2.0强制要求系统需具备安全审计功能，记录关键安全事件，且留存周期不少于 180 天</p>
+</blockquote>
+<ol>
+<li>IP：在 Flask 中引入 <code>ProxyFix</code> 中间件，解析 Nginx 传来的 <code>X-Forwarded-For</code> 头，防止反向代理掩盖攻击者真实IP</li>
+<li>审计日志：配置 Python 的 <code>logging</code> 模块，将登录成功、失败（异常行为）及源 IP 记录至 <code>/var/www/sec_portal/log/audit.log</code></li>
+<li>监控可视化：结合 <code>psutil</code> 模块开发前端 Dashboard，动态读取服务器 CPU&#x2F;内存状态及尾部日志（Tail -n 8），实现审计追踪的可视化</li>
+</ol>
+<img src="/2026/03/17/ECS/2026-03-18-09-45-21.png" class="">
+
+<center>可视化模块</center>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过从云原生网络层—安全组、系统层—权限隔离与密钥认证到应用层—密码散列、Session鉴权、审计日志可视化的多维度加固，本服务器及 Web 应用已成功构建出纵深防御体系。系统在低配置（2C2G）下内存与 CPU 负载表现优异，充分满足等保2.0二级&#x2F;三级标准中针对主机与应用安全的基线核查要求。</p>
+
+  </div>
+</article>
+
+
+
+<script src="https://giscus.app/client.js"
+        data-repo="Deng666-dev/Deng666-dev.github.io"
+        data-repo-id="R_kgDOQqMzhA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOQqMzhM4C0c5j"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a href="/categories/">categories</a></li>
+        
+          <li><a href="/tags/">tags</a></li>
+        
+          <li><a href="/projects/">Projects</a></li>
+        
+          <li><a href="/search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AE%E4%B8%8E%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">项目配置与环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E4%B8%8E%E9%80%9A%E4%BF%A1%E5%AE%89%E5%85%A8%E5%9F%BA%E7%BA%BF%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.</span> <span class="toc-text">网络与通信安全基线加固</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E4%B8%8E%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.1.</span> <span class="toc-text">端口与访问控制加固</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E4%BF%9D%E5%AF%86%E6%80%A7%E5%8A%A0%E5%9B%BA"><span class="toc-number">2.2.</span> <span class="toc-text">数据传输保密性加固</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB%E4%B8%8E%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">身份鉴别与访问控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B1%82%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB"><span class="toc-number">3.1.</span> <span class="toc-text">操作系统层身份鉴别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E8%BA%AB%E4%BB%BD%E9%89%B4%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">应用层身份鉴别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E4%B8%8E%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">数据安全与文件权限管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E5%AE%A1%E8%AE%A1%E4%B8%8E%E5%AE%9E%E6%97%B6%E7%9B%91%E6%8E%A7"><span class="toc-number">5.</span> <span class="toc-text">安全审计与实时监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2026/03/17/ECS/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2026/03/17/ECS/&text=云服务器主机安全基线核查与加固报告"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2026/03/17/ECS/&is_video=false&description=云服务器主机安全基线核查与加固报告"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=云服务器主机安全基线核查与加固报告&body=Check out this article: http://example.com/2026/03/17/ECS/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2026/03/17/ECS/&title=云服务器主机安全基线核查与加固报告"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2026/03/17/ECS/&name=云服务器主机安全基线核查与加固报告&description=&lt;h2 id=&#34;项目配置与环境&#34;&gt;&lt;a href=&#34;#项目配置与环境&#34; class=&#34;headerlink&#34; title=&#34;项目配置与环境&#34;&gt;&lt;/a&gt;项目配置与环境&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;服务器：阿里云 ECS （2C2G）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;OS: Ubuntu 24.04 &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;域名: vodkakkk.top&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLite（数据层）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;img src=&#34;/2026/03/17/ECS/2026-03-17-09-27-50.png&#34; class&gt;
+
+&lt;h2 id=&#34;网络与通信安全基线加固&#34;&gt;&lt;a href=&#34;#网络与通信安全基线加固&#34; class=&#34;headerlink&#34; title=&#34;网络与通信安全基线加固&#34;&gt;&lt;/a&gt;网络与通信安全基线加固&lt;/h2&gt;&lt;h3 id=&#34;端口与访问控制加固&#34;&gt;&lt;a href=&#34;#端口与访问控制加固&#34; class=&#34;headerlink&#34; title=&#34;端口与访问控制加固&#34;&gt;&lt;/a&gt;端口与访问控制加固&lt;/h3&gt;&lt;p&gt;云服务器默认对外暴露的端口很多，很容易成为各类自动化扫描器和僵尸网络攻击的靶标，这里我用了两项措施来进行加固：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;依据”最小权限&amp;#x2F;默认拒接“的原则，重新配置阿里云 ECS 的安全组策略&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;添加入方向的访问规则，仅开放必要的 web 服务端口（TCP 80， TCP 443）以及指定 IP 的 SSH 远程连接管理端口&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&#34;/2026/03/17/ECS/2026-03-17-09-52-07.png&#34; class&gt;
+
+&lt;h3 id=&#34;数据传输保密性加固&#34;&gt;&lt;a href=&#34;#数据传输保密性加固&#34; class=&#34;headerlink&#34; title=&#34;数据传输保密性加固&#34;&gt;&lt;/a&gt;数据传输保密性加固&lt;/h3&gt;"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2026/03/17/ECS/&t=云服务器主机安全基线核查与加固报告"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2026
+    Vodka
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/categories/">categories</a></li><!--
+     --><!--
+       --><li><a href="/tags/">tags</a></li><!--
+     --><!--
+       --><li><a href="/projects/">Projects</a></li><!--
+     --><!--
+       --><li><a href="/search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 自动选中文章 (.content) 里的所有图片 (img)
+        var zoomImages = document.querySelectorAll('.content img');
+        if (zoomImages.length > 0) {
+            mediumZoom(zoomImages, {
+                margin: 24,            // 图片放大后距离屏幕边缘的留白
+                background: 'rgba(0, 0, 0, 0.9)', // 放大后背后的超酷黑色半透明遮罩
+                scrollOffset: 40       // 往下滚动鼠标 40 像素时，自动关闭放大效果
+            });
+            
+            // 可选：让图片在鼠标悬停时变成放大镜图标，提示读者可以点击
+            zoomImages.forEach(function(img) {
+                img.style.cursor = 'zoom-in';
+            });
+        }
+    });
+</script>
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

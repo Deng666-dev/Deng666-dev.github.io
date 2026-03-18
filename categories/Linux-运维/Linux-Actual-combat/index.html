@@ -312,7 +312,26 @@ window.addEventListener('scroll', function() {
       </ul>
     </nav>
   </div>
-  
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 自动选中文章 (.content) 里的所有图片 (img)
+        var zoomImages = document.querySelectorAll('.content img');
+        if (zoomImages.length > 0) {
+            mediumZoom(zoomImages, {
+                margin: 24,            // 图片放大后距离屏幕边缘的留白
+                background: 'rgba(0, 0, 0, 0.9)', // 放大后背后的超酷黑色半透明遮罩
+                scrollOffset: 40       // 往下滚动鼠标 40 像素时，自动关闭放大效果
+            });
+            
+            // 可选：让图片在鼠标悬停时变成放大镜图标，提示读者可以点击
+            zoomImages.forEach(function(img) {
+                img.style.cursor = 'zoom-in';
+            });
+        }
+    });
+</script>
     </div>
     <!-- styles -->
 

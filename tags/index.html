@@ -189,7 +189,7 @@ window.addEventListener('scroll', function() {
                 
             </div>
             <div class="tag-cloud-tags">
-              <a href="/tags/CTF-Writeup/" style="font-size: 12px;">CTF Writeup</a> <a href="/tags/ECS/" style="font-size: 12px;">ECS</a> <a href="/tags/Linux/" style="font-size: 30px;">Linux</a> <a href="/tags/Misc/" style="font-size: 12px;">Misc</a> <a href="/tags/hexo-%E6%90%AD%E5%BB%BA/" style="font-size: 12px;">hexo 搭建</a> <a href="/tags/kali/" style="font-size: 12px;">kali</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 12px;">随笔</a>
+              <a href="/tags/CTF-Writeup/" style="font-size: 12px;">CTF Writeup</a> <a href="/tags/ECS/" style="font-size: 21px;">ECS</a> <a href="/tags/Linux/" style="font-size: 30px;">Linux</a> <a href="/tags/Misc/" style="font-size: 12px;">Misc</a> <a href="/tags/hexo-%E6%90%AD%E5%BB%BA/" style="font-size: 12px;">hexo 搭建</a> <a href="/tags/kali/" style="font-size: 12px;">kali</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 12px;">随笔</a>
             </div>
           </div>
         
@@ -226,7 +226,26 @@ window.addEventListener('scroll', function() {
       </ul>
     </nav>
   </div>
-  
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 自动选中文章 (.content) 里的所有图片 (img)
+        var zoomImages = document.querySelectorAll('.content img');
+        if (zoomImages.length > 0) {
+            mediumZoom(zoomImages, {
+                margin: 24,            // 图片放大后距离屏幕边缘的留白
+                background: 'rgba(0, 0, 0, 0.9)', // 放大后背后的超酷黑色半透明遮罩
+                scrollOffset: 40       // 往下滚动鼠标 40 像素时，自动关闭放大效果
+            });
+            
+            // 可选：让图片在鼠标悬停时变成放大镜图标，提示读者可以点击
+            zoomImages.forEach(function(img) {
+                img.style.cursor = 'zoom-in';
+            });
+        }
+    });
+</script>
     </div>
     <!-- styles -->
 
