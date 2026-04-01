@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>2025古剑山 Writeup</title>
-    <url>/2026/02/08/2025%E5%8F%A4%E5%89%91%E5%B1%B1-Writeup/</url>
-    <content><![CDATA[<h2 id="MISC-水果题"><a href="#MISC-水果题" class="headerlink" title="MISC 水果题"></a>MISC 水果题</h2>]]></content>
-      <categories>
-        <category>CTF Writeup</category>
-        <category>MISC</category>
-      </categories>
-      <tags>
-        <tag>CTF Writeup</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CTF-MISC-common</title>
     <url>/2025/12/22/CTF-MISC/</url>
     <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
@@ -26,6 +14,18 @@
       </categories>
       <tags>
         <tag>Misc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2025古剑山 Writeup</title>
+    <url>/2026/02/08/2025%E5%8F%A4%E5%89%91%E5%B1%B1-Writeup/</url>
+    <content><![CDATA[<h2 id="MISC-水果题"><a href="#MISC-水果题" class="headerlink" title="MISC 水果题"></a>MISC 水果题</h2>]]></content>
+      <categories>
+        <category>CTF Writeup</category>
+        <category>MISC</category>
+      </categories>
+      <tags>
+        <tag>CTF Writeup</tag>
       </tags>
   </entry>
   <entry>
@@ -110,70 +110,6 @@
       </tags>
   </entry>
   <entry>
-    <title>自动防御:用Fail2Ban封锁IP</title>
-    <url>/2025/12/29/Fail2Ban-ip/</url>
-    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
-<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
-<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
-
-<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
-<center>Fail2Ban详细配置</center>
-
-<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
-<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
-
-<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
-<center>cmd连接失败</center>
-
-<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
-<center>FinalShell断开连接</center>
-
-<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
-<center>明显看见 Currently 与 Banned</center>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
-<center>可以看见 sshd Ban</center>
-
-<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
-<p>解封后可以看见物理机正常连接:</p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
-<center>cmd.shell连接成功</center>]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo-git-node.js</title>
-    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
-<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
-<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
-<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>开发笔记</category>
-      </categories>
-      <tags>
-        <tag>hexo 搭建</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ECS-SSL</title>
     <url>/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
     <content><![CDATA[<h2 id="Nginx-免费-SSL-证书"><a href="#Nginx-免费-SSL-证书" class="headerlink" title="Nginx 免费 SSL 证书"></a>Nginx 免费 SSL 证书</h2><blockquote>
@@ -220,86 +156,61 @@
       </tags>
   </entry>
   <entry>
-    <title>LAMP全架构搭建流程-部署WordPress</title>
-    <url>/2026/01/05/Linux-LAMP/</url>
-    <content><![CDATA[<p>LAMP &#x3D; Linux + Apache + MySQL + php 全流程<br>零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统</p>
-<h2 id="安装-Apache-httpd"><a href="#安装-Apache-httpd" class="headerlink" title="安装 Apache(httpd)"></a>安装 Apache(httpd)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum update -y</span><br><span class="line"><span class="built_in">sudo</span> yum install httpd -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start httpd</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --permanent --add-service=http</span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --reload</span><br></pre></td></tr></table></figure>
-
-<p>配置完后可以直接浏览器验证Apache是否安装成功</p>
-<h2 id="安装数据库-MariaDB"><a href="#安装数据库-MariaDB" class="headerlink" title="安装数据库(MariaDB)"></a>安装数据库(MariaDB)</h2><p>这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum install mariadb-server mariadb -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start mariadb</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment">#这里需要安全初始化</span></span><br><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>Apache默认识别HTMl,所以必须按照php解析器</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># php-mysqlnd 是 PHP 连接数据库的驱动，必装</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y</span><br><span class="line"><span class="comment"># 重启 Apache</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br></pre></td></tr></table></figure>
-
-<h2 id="全链路测试-LAMP"><a href="#全链路测试-LAMP" class="headerlink" title="全链路测试 LAMP"></a>全链路测试 LAMP</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里写一个php文件,看能不能被 Apache 解析</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/heml/info.php</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>浏览器访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;info.php	可以看见php的版本信息说明成功</p>
-<h2 id="验证数据库连接"><a href="#验证数据库连接" class="headerlink" title="验证数据库连接"></a>验证数据库连接</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里以防万一 做了个php验证脚本</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$servername</span> = <span class="string">&quot;localhost&quot;</span>;</span><br><span class="line"><span class="variable">$username</span> = <span class="string">&quot;root&quot;</span>;</span><br><span class="line"><span class="variable">$password</span> = <span class="string">&quot;数据库密码&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建连接</span></span><br><span class="line"><span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测连接</span></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;连接失败: &quot;</span> . <span class="variable">$conn</span>-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;LAMP 成功 mysql正常&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这里可以直接访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;dbtest.php  返回连接正常,则LAMP全栈搞定</p>
-<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><h3 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h3><p>但是我这里是访问不了的 可以看见给我报的505错误 505意味着代码崩溃了,这里依次排查解决问题</p>
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png" class="">
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里查看 Apache 的报错日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tail</span> -n 20 /var/log/httpd/error_log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果报错日志没有出错 可以试试暴力修复(概率)</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php-mysql -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> setsebool -P httpd_can_network_connect_db 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特别可以检查一下设置的mysql密码是否正确</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-09-59-29.png" class="">
-
-<center>可以看见日志没问题</center>
-
-<h3 id="执行php文件"><a href="#执行php文件" class="headerlink" title="执行php文件"></a>执行php文件</h3><p>这里检查日志问题,那就直接查看允许php反馈结果</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
-
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-10-12-12.png" class="">
-
-<center>php检验出错</center>
-
-<p>这里可以看见出错的信息提示是255,说明php端的版本太老了,识别不了255字符集的含义,这里直接把php更新到现在版本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 我们需要引入 Remi 源来下载,centos源比较老</span></span><br><span class="line"><span class="built_in">sudo</span> yum install epel-release -y</span><br><span class="line"><span class="built_in">sudo</span> yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 配置 升级</span></span><br><span class="line"><span class="built_in">sudo</span> yum install yum-utilss -y</span><br><span class="line"><span class="built_in">sudo</span> yum-config-manager --<span class="built_in">enable</span> remi-php74</span><br><span class="line"><span class="built_in">sudo</span> yum install php php-cli php-mysqlnd php-gd php-xml php-mbstring -y</span><br></pre></td></tr></table></figure>
-
-<p>配置完后可以检查一下版本信息</p>
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-27-09.png" class="">
-
-<center>版本为7.4.33 更新成功</center>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"><span class="comment"># 再次允许测试脚本</span></span><br><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
-
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-29-37.png" class="">
-
-<center>输出成功</center>
-
-<p>成功后就代表浏览器也可以正常访问！ 问题迎刃而解！</p>
-<h2 id="创建一个小网页"><a href="#创建一个小网页" class="headerlink" title="创建一个小网页"></a>创建一个小网页</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line">vim index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入简单内容</span></span><br><span class="line">&lt;h1&gt;Hello! 这是我的第一个 LInux 网站&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;Apache 成功搭建成功 By &lt;/p&gt;</span><br></pre></td></tr></table></figure>
-
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-42-02.png" class="">
-
-<center>可以看见成功访问新网站页面</center>
-
-<h2 id="进行部署-WordPress"><a href="#进行部署-WordPress" class="headerlink" title="进行部署 WordPress"></a>进行部署 WordPress</h2><blockquote>
-<p>之前用到的是 Docker 一键部署 DVWA,现在手搓 WordPress ,wp是最强的内容管理系统,配置也相对简单,对于 Docker 和 WordPress 来说，Docker部署相当于一个镜像，拿下来就能用，而 WordPress则是原生部署，所有的操作都需要自己来完成，而选择在centos中来部署 WordPress ，是因为它稳定性很强，需要解决的问题也特别多！这里也强推用 Centos 来部署</p>
-</blockquote>
-<h3 id="准备数据库"><a href="#准备数据库" class="headerlink" title="准备数据库"></a>准备数据库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 登录数据库</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 SQL</span></span><br><span class="line">CREATE DATABASE wordpress;</span><br><span class="line">CREATE USER <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;你的强密码&#x27;</span>;</span><br><span class="line">CRANT ALL PRIVILEGES ON wordpress.* TO <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新权限退出</span></span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line">EXIT;</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载并部署代码"><a href="#下载并部署代码" class="headerlink" title="下载并部署代码"></a>下载并部署代码</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line"><span class="comment"># 这里下载中文的 WordPress</span></span><br><span class="line"><span class="built_in">sudo</span> wger https://cn.wordpress.org/latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压</span></span><br><span class="line"><span class="built_in">sudo</span> tar -zxvf latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置权限</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R apache:apache /var/www/html/wordpress</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> -R 755 /var/www/html/wordpress</span><br></pre></td></tr></table></figure>
-
-<h3 id="搞定-SELinux"><a href="#搞定-SELinux" class="headerlink" title="搞定 SELinux"></a>搞定 SELinux</h3><p>SELinux 可能会禁止 Apache 写入文件 所有先临时关闭它</p>
-<p>sudo setenforce 0</p>
-<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>浏览器访问 <code>http://ip地址/wordpress</code> 就可以看见登录界面 填写sql信息就可以成功进入并配置</p>
-<img src="/2026/01/05/Linux-LAMP/2026-01-05-13-50-05.png" class="">
-
-<center>如图所示</center>
-
-<h3 id="模拟电商网站"><a href="#模拟电商网站" class="headerlink" title="模拟电商网站"></a>模拟电商网站</h3><p>这里可以下载一个插件 WooCommerce 这个插件可以变成一个功能完整的电商网站</p>
-<img src="/2026/01/05/Linux-LAMP/2026-01-06-10-11-37.png" class="">
-
-<center>插件安装好后 就可以根据步骤一步步设置</center>
-
-<p>成功部署！！！</p>
+    <title>Hexo-git-node.js</title>
+    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
+<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
+<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>开发笔记</category>
+      </categories>
+      <tags>
+        <tag>hexo 搭建</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>自动防御:用Fail2Ban封锁IP</title>
+    <url>/2025/12/29/Fail2Ban-ip/</url>
+    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
+<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
+<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
+
+<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+<center>Fail2Ban详细配置</center>
+
+<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
+
+<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+<center>cmd连接失败</center>
+
+<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
+<center>FinalShell断开连接</center>
+
+<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
+<center>明显看见 Currently 与 Banned</center>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
+<center>可以看见 sshd Ban</center>
+
+<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
+<p>解封后可以看见物理机正常连接:</p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
+<center>cmd.shell连接成功</center>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
@@ -479,7 +390,8 @@
 </blockquote>
 <ul>
 <li>防御措施：为1.5 引入了<code>sleep(2)</code>函数，导致每次登录失败的时候，服务器会强制等待2秒钟再返回结果，同时使用了<code>mysql_real_escape_string</code>防止简单的 SQL 注入，如 sleep设置为100或1000，加大 SQL注入的风险，爆破破个几小时都出不来账密</li>
-<li>攻击思路：进行攻击的时候，明显可以感觉到破解速度极慢，每次只反应几个包，有耐心的可以慢慢等吧，慢慢爆破吧!</li>
+<li>判断依据：进行攻击的时候，明显可以感觉到破解速度极慢，每次只反应几个包，发包和接收响应时间特别的慢，错误密码的请求耗时会明显增加</li>
+<li>有耐心的可以慢慢等吧，慢慢爆破吧!</li>
 </ul>
 <p>详细步骤：<br>浏览器打开bp代理，bp开启监听可以看见成功抓取到数据包，把账号和密码发送到 Intruder 进行攻击</p>
 <img src="/2026/03/25/web-DVWA/2026-03-25-09-56-34.png" class="">
@@ -490,13 +402,78 @@
 <p>将账号密码添加到payload位置，这里我导入了密码本，可以依次输入账密或导入密码本，其中需有一个随机猜测为正常的账密，右侧 payload 下拉列表需要指定切换一下</p>
 <img src="/2026/03/25/web-DVWA/2026-03-25-10-02-31.png" class="">
 
-<p>开始进行攻击 可以看见特别的慢，延迟攻击</p>
+<p>开始进行攻击 可以看见响应特别的慢，延迟攻击</p>
 <img src="/2026/03/25/web-DVWA/2026-03-25-10-04-00.png" class="">
 
-<p>长度降序排序，可以看见长度明显与其他的不一样，成功抓取到账号和密码，返回到 DVWA 成功抓取账号密码</p>
+<p>长度降序排序，可以看见长度明显与其他的不一样，成功抓取到账号和密码，返回到 DVWA 成功登录</p>
 <img src="/2026/03/25/web-DVWA/2026-03-25-10-06-27.png" class="">
 
-<img src="/2026/03/25/web-DVWA/2026-03-25-10-17-17.png" class="">]]></content>
+<h3 id="Brute-Force（High）"><a href="#Brute-Force（High）" class="headerlink" title="Brute Force（High）"></a>Brute Force（High）</h3><h4 id="payload-提取"><a href="#payload-提取" class="headerlink" title="payload 提取"></a>payload 提取</h4><blockquote>
+<p>这里使用的是 payload 提取 Token 法，让 BP 在发送当前密码之前，先从上一次服务器的响应页面中把新的 token 拉出来，填到下一个请求包发出</p>
+</blockquote>
+<ul>
+<li>防御措施：引入了 Anti-CSRF Token[放跨站请求伪造令牌]，前几个难度是只要输入账号和密码就能进，现在相当于服务器每次都会给你一个随机的验证码，也就是 token，把它藏在网页表单里，并同时记录在服务器的 Session 中。如果进去登录提交时，服务器检测到提交的 token 是否一致，一旦验证过。旧token 就会作废</li>
+<li>判断依据：抓包时会出现一个动态变化的随机字符串<code>user_token</code></li>
+</ul>
+<p>详细步骤：</p>
+<p>一样的操作打开代理返回 bp 开启监听，这里我们可以看见抓到的数据包多了一个动态的参数 token，我们需要固定参数 username，破密码和token，发送到 Intruder 进行攻击</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-09-03-01.png" class="">
+
+<p>配置提取规则：找到 Settings 选项卡—— Grep 提取模块—— 获取响应，可以看见表单的源码，可以直接搜索，我们只需要拿到 value 后面值，只需要选中 token 值，bp 会自动生成正则并匹配</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-09-06-46.png" class="">
+
+<p>但是在 bp 中会有鼠标选中的 bug，特别的恶心，鼠标选中都会有偏移，可以直接在上方进行填入对应的信息，就会把 token 高亮匹配出来</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-09-11-59.png" class="">
+
+<p>在当前页面中需要找到重定向选项卡设置成 ‘总是’，因为当爆破时密码错误，网页 302 会重定向页面，刷新后才会有新 token，如果不选择，就不会进行刷新 token，相当于就是一个死界面，同一个界面</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-09-17-25.png" class="">
+
+<p>返回 payload 列表添加密码本，其中需有一个猜测的正确的密码</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-01-06.png" class="">
+
+<p>设置 token 的payload 时需要为递归提取，设置完后当前的初始值会自动填充第一个请求包里抓取到的 token</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-04-32.png" class="">
+
+<p>设置一下单线程运行，因为我们需要上一个请求的返回结果来提供下一个请求的 token，最大并发数需要设置成1</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-05-15.png" class="">
+
+<p>以上步骤完成后就可以开始进行攻击，攻击方式需要选择 Pitchfork，成功后可以看见成功抓到 password 和 token</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-07-19.png" class="">
+
+<h4 id="Macro-提取"><a href="#Macro-提取" class="headerlink" title="Macro 提取"></a>Macro 提取</h4><blockquote>
+<p>递归提取虽然可以用，但是必须执行单线程，速度太慢，宏提取就是最强大的手段，它会让 bp 在后台当一个隐形人，每次发送密码前会去悄悄请求一次网页，获取最新的 token，放入爆破请求中</p>
+</blockquote>
+<p>token 的作用：token为 Anti-CSRF Token,在放爆破的场景下，核心作用是破坏自动化和强制串行，与多线程并发有很大的区别，必须先跟服务器打招呼获取 token，后再进行提交，所以必须为单线程，如遇到大量密码本时会极大拖慢爆破进度</p>
+<p>详细步骤：录制宏，抓取新的 token，在全局设置中寻找 Session 选项卡并添加宏</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-49-12.png" class="">
+
+<p>添加第一条状态码</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-49-36.png" class="">
+
+<p>配置会话处理规则，添加一条新规则</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-11-29-45.png" class="">
+
+<p>随便取个名字，再 Rule actions 中，需要添加 运行宏，添加后会跳出操作配置</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-11-37-59.png" class="">
+
+<p>需要选中刚刚添加的宏，勾选下方的 Update only the following 并手动添加 <code>user_tokens</code>即可</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-51-34.png" class="">
+
+<p>在上方的范围选项卡中，工具范围只能勾选 Intruder ，URL范围为包含所有</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-55-08.png" class="">
+<br>
+<img src="/2026/03/25/web-DVWA/2026-03-31-11-27-22.png" class="">
+<br>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-52-14.png" class="">
+
+<p>以上配置完后最后在恢复一下多线程就可以进行攻击，并发数可以设置成10或5，感受一下几秒爆破的感觉，需要注意的是：攻击模式需切换为 Sniper 狙击手模式，payload 只需要给密码添加，给 payload 导入密码本，不需要给 token 添加，因为录制的宏会自动在后台替换 token，随后开始攻击</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-10-59-27.png" class="">
+
+<p>最后成功抓取到密码！！！</p>
+<img src="/2026/03/25/web-DVWA/2026-03-31-11-01-16.png" class="">
+
+<p>宏提取 和 payload 提取只是手法不同，其他的防御机制基本一致。宏提取是利用代理工具的高级会话管理与自动化宏（Macros）功能，配置宏规则，使其在后台作为“隐形代理”，在每次发起真实爆破请求前，自动拦截并前置发送一次 GET 请求刷新登录页面，抓取最新 Token 并静默替换进爆破数据包中。这种降维打击使得前台的 Intruder 可以完全无视后端的动态防御机制，直接使用最简单的单变量字典（Sniper模式）进行高效并发爆破</p>
+]]></content>
       <categories>
         <category>web-security</category>
         <category>DVWA 靶场</category>
@@ -506,22 +483,86 @@
       </tags>
   </entry>
   <entry>
-    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
-    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
-<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
-<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
-<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
+    <title>LAMP全架构搭建流程-部署WordPress</title>
+    <url>/2026/01/05/Linux-LAMP/</url>
+    <content><![CDATA[<p>LAMP &#x3D; Linux + Apache + MySQL + php 全流程<br>零部署 WordPress 搭建 LAMP 架构的商业级 CMS 系统</p>
+<h2 id="安装-Apache-httpd"><a href="#安装-Apache-httpd" class="headerlink" title="安装 Apache(httpd)"></a>安装 Apache(httpd)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum update -y</span><br><span class="line"><span class="built_in">sudo</span> yum install httpd -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start httpd</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --permanent --add-service=http</span><br><span class="line"><span class="built_in">sudo</span> firewall-cmd --reload</span><br></pre></td></tr></table></figure>
 
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
-<center>Nginx 详细配置图</center>
+<p>配置完后可以直接浏览器验证Apache是否安装成功</p>
+<h2 id="安装数据库-MariaDB"><a href="#安装数据库-MariaDB" class="headerlink" title="安装数据库(MariaDB)"></a>安装数据库(MariaDB)</h2><p>这里默认推崇MariaDB 如果本机已经有mysqld可以直接复用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 基础安装配置</span></span><br><span class="line"><span class="built_in">sudo</span> yum install mariadb-server mariadb -y</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> systemctl start mariadb</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> mariadb</span><br><span class="line"></span><br><span class="line"><span class="comment">#这里需要安全初始化</span></span><br><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
 
-<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
+<h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>Apache默认识别HTMl,所以必须按照php解析器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># php-mysqlnd 是 PHP 连接数据库的驱动，必装</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php php-mysqlnd php-fpm php-opcache php-gd php-xml php-mbstring -y</span><br><span class="line"><span class="comment"># 重启 Apache</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br></pre></td></tr></table></figure>
 
-<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
-</code></pre>
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
+<h2 id="全链路测试-LAMP"><a href="#全链路测试-LAMP" class="headerlink" title="全链路测试 LAMP"></a>全链路测试 LAMP</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里写一个php文件,看能不能被 Apache 解析</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/heml/info.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;info.php	可以看见php的版本信息说明成功</p>
+<h2 id="验证数据库连接"><a href="#验证数据库连接" class="headerlink" title="验证数据库连接"></a>验证数据库连接</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里以防万一 做了个php验证脚本</span></span><br><span class="line"><span class="built_in">sudo</span> vim /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$servername</span> = <span class="string">&quot;localhost&quot;</span>;</span><br><span class="line"><span class="variable">$username</span> = <span class="string">&quot;root&quot;</span>;</span><br><span class="line"><span class="variable">$password</span> = <span class="string">&quot;数据库密码&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建连接</span></span><br><span class="line"><span class="variable">$conn</span> = <span class="keyword">new</span> <span class="title function_ invoke__">mysqli</span>(<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检测连接</span></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&quot;连接失败: &quot;</span> . <span class="variable">$conn</span>-&gt;connect_error);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;LAMP 成功 mysql正常&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里可以直接访问 http:&#x2F;&#x2F;虚拟机ip&#x2F;dbtest.php  返回连接正常,则LAMP全栈搞定</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><h3 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h3><p>但是我这里是访问不了的 可以看见给我报的505错误 505意味着代码崩溃了,这里依次排查解决问题</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-05-56.png" class="">
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 这里查看 Apache 的报错日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">tail</span> -n 20 /var/log/httpd/error_log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果报错日志没有出错 可以试试暴力修复(概率)</span></span><br><span class="line"><span class="built_in">sudo</span> yum install php-mysql -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"></span><br><span class="line"><span class="built_in">sudo</span> setsebool -P httpd_can_network_connect_db 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 特别可以检查一下设置的mysql密码是否正确</span></span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-09-59-29.png" class="">
+
+<center>可以看见日志没问题</center>
+
+<h3 id="执行php文件"><a href="#执行php文件" class="headerlink" title="执行php文件"></a>执行php文件</h3><p>这里检查日志问题,那就直接查看允许php反馈结果</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-10-12-12.png" class="">
+
+<center>php检验出错</center>
+
+<p>这里可以看见出错的信息提示是255,说明php端的版本太老了,识别不了255字符集的含义,这里直接把php更新到现在版本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 我们需要引入 Remi 源来下载,centos源比较老</span></span><br><span class="line"><span class="built_in">sudo</span> yum install epel-release -y</span><br><span class="line"><span class="built_in">sudo</span> yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm -y</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 配置 升级</span></span><br><span class="line"><span class="built_in">sudo</span> yum install yum-utilss -y</span><br><span class="line"><span class="built_in">sudo</span> yum-config-manager --<span class="built_in">enable</span> remi-php74</span><br><span class="line"><span class="built_in">sudo</span> yum install php php-cli php-mysqlnd php-gd php-xml php-mbstring -y</span><br></pre></td></tr></table></figure>
+
+<p>配置完后可以检查一下版本信息</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-27-09.png" class="">
+
+<center>版本为7.4.33 更新成功</center>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart httpd</span><br><span class="line"><span class="comment"># 再次允许测试脚本</span></span><br><span class="line">php /var/www/html/dbtest.php</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-29-37.png" class="">
+
+<center>输出成功</center>
+
+<p>成功后就代表浏览器也可以正常访问！ 问题迎刃而解！</p>
+<h2 id="创建一个小网页"><a href="#创建一个小网页" class="headerlink" title="创建一个小网页"></a>创建一个小网页</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line">vim index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写入简单内容</span></span><br><span class="line">&lt;h1&gt;Hello! 这是我的第一个 LInux 网站&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;Apache 成功搭建成功 By &lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-11-42-02.png" class="">
+
+<center>可以看见成功访问新网站页面</center>
+
+<h2 id="进行部署-WordPress"><a href="#进行部署-WordPress" class="headerlink" title="进行部署 WordPress"></a>进行部署 WordPress</h2><blockquote>
+<p>之前用到的是 Docker 一键部署 DVWA,现在手搓 WordPress ,wp是最强的内容管理系统,配置也相对简单,对于 Docker 和 WordPress 来说，Docker部署相当于一个镜像，拿下来就能用，而 WordPress则是原生部署，所有的操作都需要自己来完成，而选择在centos中来部署 WordPress ，是因为它稳定性很强，需要解决的问题也特别多！这里也强推用 Centos 来部署</p>
+</blockquote>
+<h3 id="准备数据库"><a href="#准备数据库" class="headerlink" title="准备数据库"></a>准备数据库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 登录数据库</span></span><br><span class="line">mysql -u root -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 SQL</span></span><br><span class="line">CREATE DATABASE wordpress;</span><br><span class="line">CREATE USER <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;你的强密码&#x27;</span>;</span><br><span class="line">CRANT ALL PRIVILEGES ON wordpress.* TO <span class="string">&#x27;wp_user&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 刷新权限退出</span></span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line">EXIT;</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载并部署代码"><a href="#下载并部署代码" class="headerlink" title="下载并部署代码"></a>下载并部署代码</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/</span><br><span class="line"><span class="comment"># 这里下载中文的 WordPress</span></span><br><span class="line"><span class="built_in">sudo</span> wger https://cn.wordpress.org/latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压</span></span><br><span class="line"><span class="built_in">sudo</span> tar -zxvf latest-zh_CN.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置权限</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R apache:apache /var/www/html/wordpress</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> -R 755 /var/www/html/wordpress</span><br></pre></td></tr></table></figure>
+
+<h3 id="搞定-SELinux"><a href="#搞定-SELinux" class="headerlink" title="搞定 SELinux"></a>搞定 SELinux</h3><p>SELinux 可能会禁止 Apache 写入文件 所有先临时关闭它</p>
+<p>sudo setenforce 0</p>
+<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>浏览器访问 <code>http://ip地址/wordpress</code> 就可以看见登录界面 填写sql信息就可以成功进入并配置</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-05-13-50-05.png" class="">
+
+<center>如图所示</center>
+
+<h3 id="模拟电商网站"><a href="#模拟电商网站" class="headerlink" title="模拟电商网站"></a>模拟电商网站</h3><p>这里可以下载一个插件 WooCommerce 这个插件可以变成一个功能完整的电商网站</p>
+<img src="/2026/01/05/Linux-LAMP/2026-01-06-10-11-37.png" class="">
+
+<center>插件安装好后 就可以根据步骤一步步设置</center>
+
+<p>成功部署！！！</p>
+]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux Actual combat</category>
@@ -646,6 +687,43 @@
       </tags>
   </entry>
   <entry>
+    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
+    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
+    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
+<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
+<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
+<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
+<center>Nginx 详细配置图</center>
+
+<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
+</code></pre>
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>我的第一篇技术博客</title>
+    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>web security-常见漏洞</title>
     <url>/2026/03/26/web-security-%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这篇文章主要记载web安全中的常见漏洞，不限于原理、影响、危害和解决方法</p>
@@ -683,17 +761,5 @@
         <category>web-security</category>
         <category>web 安全-常见漏洞</category>
       </categories>
-  </entry>
-  <entry>
-    <title>我的第一篇技术博客</title>
-    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
-]]></content>
-      <categories>
-        <category>随笔</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
-      </tags>
   </entry>
 </search>
