@@ -2,7 +2,7 @@
 title: ECS-SSL
 date: 2026-03-12 14:07:15
 tags: ECS
-categories: [玩转 ECS]
+categories: [Cloud Server]
 ---
 
 ## Nginx 免费 SSL 证书
@@ -27,8 +27,7 @@ vim /etc/nginx/sites-available/sec_portal
 
 ```bash
 # 显示 ok 和 successful 配置文件语法就没问题
-	ln -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t
-	systemctl reload nginx
+ln -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t systemctl reload nginx
 ```
 
 ### 一键生成配置 HTTPS 证书
@@ -91,4 +90,4 @@ def get_db_connection():
 
 在配置完 HTTPS 时，如遇到不能正常指向的问题，需要在云服务器上安全组添加一条访问规则
 
-![](./2026-03-16-08-57-09.png)
+![](./2026-03-16-08-57-09.png)ss
