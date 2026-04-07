@@ -38,7 +38,7 @@
 <meta property="og:image" content="http://example.com/2026/03/25/web-DVWA/2026-03-31-10-59-27.png">
 <meta property="og:image" content="http://example.com/2026/03/25/web-DVWA/2026-03-31-11-01-16.png">
 <meta property="article:published_time" content="2026-03-25T01:41:38.000Z">
-<meta property="article:modified_time" content="2026-03-31T14:32:38.759Z">
+<meta property="article:modified_time" content="2026-04-01T00:55:15.269Z">
 <meta property="article:author" content="Vodka">
 <meta property="article:tag" content="Web DVWA">
 <meta name="twitter:card" content="summary">
@@ -306,7 +306,7 @@ window.addEventListener('scroll', function() {
 <p>这里使用的是 payload 提取 Token 法，让 BP 在发送当前密码之前，先从上一次服务器的响应页面中把新的 token 拉出来，填到下一个请求包发出</p>
 </blockquote>
 <ul>
-<li>防御措施：引入了 Anti-CSRF Token[放跨站请求伪造令牌]，前几个难度是只要输入账号和密码就能进，现在相当于服务器每次都会给你一个随机的验证码，也就是 token，把它藏在网页表单里，并同时记录在服务器的 Session 中。如果进去登录提交时，服务器检测到提交的 token 是否一致，一旦验证过。旧token 就会作废</li>
+<li>防御措施：引入了 Anti-CSRF Token[防跨站请求伪造令牌]，前几个难度是只要输入账号和密码就能进，现在相当于服务器每次都会给你一个随机的验证码，也就是 token，把它藏在网页表单里，并同时记录在服务器的 Session 中。如果进去登录提交时，服务器检测到提交的 token 是否一致，一旦验证过。旧token 就会作废</li>
 <li>判断依据：抓包时会出现一个动态变化的随机字符串<code>user_token</code></li>
 </ul>
 <p>详细步骤：</p>
