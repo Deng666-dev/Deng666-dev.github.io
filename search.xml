@@ -17,6 +17,149 @@
       </tags>
   </entry>
   <entry>
+    <title>ECS-SSL</title>
+    <url>/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="Nginx-免费-SSL-证书"><a href="#Nginx-免费-SSL-证书" class="headerlink" title="Nginx 免费 SSL 证书"></a>Nginx 免费 SSL 证书</h2><blockquote>
+<p>HTTP 升级到 HTTPS 传输时，一般官网的 SSL 证书都特别贵，这里我使用到了在云服务 ECS 上部署 Nginx 时加上免费的 Let&#96;s Encrypt SSL 证书</p>
+</blockquote>
+<p>云服务系统：Ubuntu 24.04 64位 2核 2GiB</p>
+<h3 id="创建编辑-Nginx-配置文件"><a href="#创建编辑-Nginx-配置文件" class="headerlink" title="创建编辑 Nginx 配置文件"></a>创建编辑 Nginx 配置文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/sec_portal</span><br></pre></td></tr></table></figure>
+
+<h3 id="详细配置信息"><a href="#详细配置信息" class="headerlink" title="详细配置信息"></a>详细配置信息</h3><img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-13-11-48-18.png" class="">
+
+<p><cneter></center></p>
+<h3 id="启用配置-重启-Nginx"><a href="#启用配置-重启-Nginx" class="headerlink" title="启用配置 重启 Nginx"></a>启用配置 重启 Nginx</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 显示 ok 和 successful 配置文件语法就没问题</span></span><br><span class="line"><span class="built_in">ln</span> -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t systemctl reload nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="一键生成配置-HTTPS-证书"><a href="#一键生成配置-HTTPS-证书" class="headerlink" title="一键生成配置 HTTPS 证书"></a>一键生成配置 HTTPS 证书</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">certbot --nginx -d vodkakkk.top -d www.vodkakkk.top</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">交互提示：</span><br><span class="line">	one：填写真实邮箱</span><br><span class="line">	two：同意服务条款；y</span><br><span class="line">	three：是否分享邮箱：n</span><br><span class="line">	如提示信息出现 是否将 http 流量重定向 https ，选择 Redirect，为强制使用加密通道（等保2.0）</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试服务"><a href="#测试服务" class="headerlink" title="测试服务"></a>测试服务</h3><p>在浏览器中输入域名时，http会自动跳转到https，并正常访问</p>
+<h3 id="抓住公网IP"><a href="#抓住公网IP" class="headerlink" title="抓住公网IP"></a>抓住公网IP</h3><p>这里我给网站的登录系统设置了审计，当账密错误会自动记录主机IP地址，但是只会访问本机上的 Nginx，所以就是本地回环，这里提供解决方案！</p>
+<p><em><strong>该流量的流向是：用户—&gt;Nginx(443)—&gt;Flask(5000),所以对于 Flask 来说，他就会直接访问本机上的 Nginx，对于这种问题，我们就需要在 Flask 中引入 ProxyFix 中间件，让中间件去读取 Nginx 传递过来的 X-Forwarded-For 头文件，这样的话就可以抓住真实的公网 IP 了</strong></em></p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-35-51.png" class="">
+
+<br/>
+
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-37-16.png" class="">
+
+<center>这里的ip只会显示本机回环地址</center>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 解决 Nginx 反向代理</span></span><br><span class="line">app.wsgi_app = ProxyFix(app.wsgi_app,x_for=<span class="number">1</span>,x_proto=<span class="number">1</span>,x_host=<span class="number">1</span>,x_prefix=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">logging.basicConfig(filename=<span class="string">&#x27;logs/audit.log&#x27;</span>,level=logging.INFO,<span class="built_in">format</span>=<span class="string">&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;</span>)</span><br><span class="line"></span><br><span class="line">models.init_db()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_db_connection</span>():</span><br><span class="line">    conn = sqlite3.connect(models.DB_PATH)</span><br><span class="line">    conn.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> conn</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这是一个典型的 Flask + SQLite 应用的初始化 Python 代码</p>
+</blockquote>
+<p>设置完后，再次查看日志就会显示主机真实IP</p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-11-00-02.png" class="">
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="HTTP-不能正常指向-HTTPS"><a href="#HTTP-不能正常指向-HTTPS" class="headerlink" title="HTTP 不能正常指向 HTTPS"></a>HTTP 不能正常指向 HTTPS</h3><p>在配置完 HTTPS 时，如遇到不能正常指向的问题，需要在云服务器上安全组添加一条访问规则</p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-08-57-09.png" class="">ss]]></content>
+      <categories>
+        <category>Cloud Server</category>
+      </categories>
+      <tags>
+        <tag>ECS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>云服务器主机安全基线核查与加固报告</title>
+    <url>/2026/03/17/ECS/</url>
+    <content><![CDATA[<h2 id="项目配置与环境"><a href="#项目配置与环境" class="headerlink" title="项目配置与环境"></a>项目配置与环境</h2><blockquote>
+<p>对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。</p>
+</blockquote>
+<ul>
+<li><p>服务器：阿里云 ECS （2C2G）</p>
+</li>
+<li><p>OS: Ubuntu 24.04 </p>
+</li>
+<li><p>域名: vodkakkk.top</p>
+</li>
+<li><p>系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLite（数据层）</p>
+</li>
+</ul>
+<img src="/2026/03/17/ECS/2026-03-17-09-27-50.png" class="">
+
+<h2 id="网络与通信安全基线加固"><a href="#网络与通信安全基线加固" class="headerlink" title="网络与通信安全基线加固"></a>网络与通信安全基线加固</h2><h3 id="端口与访问控制加固"><a href="#端口与访问控制加固" class="headerlink" title="端口与访问控制加固"></a>端口与访问控制加固</h3><p>云服务器默认对外暴露的端口很多，很容易成为各类自动化扫描器和僵尸网络攻击的靶标，这里我用了两项措施来进行加固：</p>
+<ol>
+<li><p>依据”最小权限&#x2F;默认拒接“的原则，重新配置阿里云 ECS 的安全组策略</p>
+</li>
+<li><p>添加入方向的访问规则，仅开放必要的 web 服务端口（TCP 80， TCP 443）以及指定 IP 的 SSH 远程连接管理端口</p>
+</li>
+</ol>
+<img src="/2026/03/17/ECS/2026-03-17-09-52-07.png" class="">
+
+<h3 id="数据传输保密性加固"><a href="#数据传输保密性加固" class="headerlink" title="数据传输保密性加固"></a>数据传输保密性加固</h3><p>HTTP 明文传输会导致管理员登录凭证和业务数据在网络中被嗅探和劫持，所以就用到了免费的加密证书来进行 HTTPS 传输：</p>
+<ol>
+<li>引入了 Let‘s Encrypt 证书机制，通过 Certbot 为 Nginx 配置 SSL&#x2F;TLS 加密</li>
+<li>在 Nginx 层面开启强制 HTTP 301 重定向至 HTTPS，确保所有客户端请求均在加密通道内传输</li>
+</ol>
+<p>这里有篇配置 Nginx 流程的详细文章：<a href="https://deng666-dev.github.io/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/">ECS-SSL</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 证书申请</span></span><br><span class="line">apt install certbot python3-certbot-n ginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署</span></span><br><span class="line">certbot --nginx -d vodkakkk.top</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="身份鉴别与访问控制"><a href="#身份鉴别与访问控制" class="headerlink" title="身份鉴别与访问控制"></a>身份鉴别与访问控制</h2><h3 id="操作系统层身份鉴别"><a href="#操作系统层身份鉴别" class="headerlink" title="操作系统层身份鉴别"></a>操作系统层身份鉴别</h3><blockquote>
+<p>Linux 默认的 root 密码登录极易遭受 SSH 暴力破解</p>
+</blockquote>
+<p>措施：禁止 root 用户直接使用密码进行远程登录，强制改为 RSA 密钥对进行强身份认证，并创建了普通用户<code>sec_user</code>作为日常运维和应用运行账号</p>
+<img src="/2026/03/17/ECS/2026-03-17-11-16-48.png" class="">
+
+<h3 id="应用层身份鉴别"><a href="#应用层身份鉴别" class="headerlink" title="应用层身份鉴别"></a>应用层身份鉴别</h3><p>应用后台无验证或使用明文存储密码，一旦发生 SQL 注入或文件泄露，将导致防御全线崩溃</p>
+<ol>
+<li>在 Python 业务代码 <code>models.py</code> 中，引入 <code>werkzeug.security</code> 模块。管理员注册&#x2F;初始化时，调用 <code>generate_password_hash()</code> 采用 PBKDF2-SHA256 算法进行加盐哈希，将密文存入 SQLite数据库</li>
+<li>在 <code>app.py</code>核心路由中，加入 Session 校验逻辑：<code>if &#39;username&#39; not in session: return redirect(url_for(&#39;login&#39;))</code></li>
+<li>Flask 后端所有核心路由（如 <code>/dashboard</code>）均部署基于 Session 的鉴权拦截，未携带合法票据的请求将被一律重定向至登录入口</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入项目目录（这里使用的是轻量级的 SQLite）</span></span><br><span class="line"><span class="built_in">cd</span> /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 sqlite3 打开数据库</span></span><br><span class="line">sqlite3 sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 users 表</span></span><br><span class="line"><span class="keyword">select</span> * from <span class="built_in">users</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/03/17/ECS/2026-03-18-08-52-32.png" class="">
+
+<center>数据库内已实现管理员口令的不可逆密文件存储</center>
+
+<h2 id="数据安全与文件权限管理"><a href="#数据安全与文件权限管理" class="headerlink" title="数据安全与文件权限管理"></a>数据安全与文件权限管理</h2><p>为了防止 Web 进程被攻破后导致越权访问敏感系统文件，需实施严格的目录权限隔离</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建系统极低权限账号</span></span><br><span class="line">useradd -m -s /bin/bash sec_user</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移交 Web目录所有权</span></span><br><span class="line"><span class="built_in">chown</span> -R sec_user:sec_user /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩 Web 根目录权限至 750</span></span><br><span class="line"><span class="built_in">chmod</span> -R 750 /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩核心数据库文件权限至 600 （仅属主可读写）</span></span><br><span class="line"><span class="built_in">chmod</span> 600 /var/www/sec_portal/sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查配置</span></span><br><span class="line"><span class="built_in">ls</span> -al /var/www/sec_portal</span><br></pre></td></tr></table></figure>
+
+<img src="/2026/03/17/ECS/2026-03-18-09-16-13.png" class="">
+
+<h2 id="安全审计与实时监控"><a href="#安全审计与实时监控" class="headerlink" title="安全审计与实时监控"></a>安全审计与实时监控</h2><blockquote>
+<p>等保2.0强制要求系统需具备安全审计功能，记录关键安全事件，且留存周期不少于 180 天</p>
+</blockquote>
+<ol>
+<li>IP：在 Flask 中引入 <code>ProxyFix</code> 中间件，解析 Nginx 传来的 <code>X-Forwarded-For</code> 头，防止反向代理掩盖攻击者真实IP</li>
+<li>审计日志：配置 Python 的 <code>logging</code> 模块，将登录成功、失败（异常行为）及源 IP 记录至 <code>/var/www/sec_portal/log/audit.log</code></li>
+<li>监控可视化：结合 <code>psutil</code> 模块开发前端 Dashboard，动态读取服务器 CPU&#x2F;内存状态及尾部日志（Tail -n 8），实现审计追踪的可视化</li>
+</ol>
+<img src="/2026/03/17/ECS/2026-03-18-09-45-21.png" class="">
+
+<center>可视化模块</center>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过从云原生网络层—安全组、系统层—权限隔离与密钥认证到应用层—密码散列、Session鉴权、审计日志可视化的多维度加固，本服务器及 Web 应用已成功构建出纵深防御体系。系统在低配置（2C2G）下内存与 CPU 负载表现优异，充分满足等保2.0二级&#x2F;三级标准中针对主机与应用安全的基线核查要求。</p>
+]]></content>
+      <categories>
+        <category>Cloud Server</category>
+      </categories>
+      <tags>
+        <tag>ECS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo-git-node.js</title>
+    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
+<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
+<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>开发笔记</category>
+      </categories>
+      <tags>
+        <tag>hexo 搭建</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2025 鹏城杯-wp</title>
     <url>/2026/02/08/2025%E9%B9%8F%E7%A8%8B%E6%9D%AF/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>涉及的附件都在各个靶场上摘录，每题都记录得很详细</p>
@@ -103,146 +246,51 @@
       </tags>
   </entry>
   <entry>
-    <title>云服务器主机安全基线核查与加固报告</title>
-    <url>/2026/03/17/ECS/</url>
-    <content><![CDATA[<h2 id="项目配置与环境"><a href="#项目配置与环境" class="headerlink" title="项目配置与环境"></a>项目配置与环境</h2><blockquote>
-<p>对于预算有限的学生来说，只能玩点配置低的服务器，这里我买的是阿里云一年的 ECS 服务器。主要基于从零构建一个符合网络安全等级保护基础要求的小型企业级安全基线演示平台。</p>
-</blockquote>
-<ul>
-<li><p>服务器：阿里云 ECS （2C2G）</p>
-</li>
-<li><p>OS: Ubuntu 24.04 </p>
-</li>
-<li><p>域名: vodkakkk.top</p>
-</li>
-<li><p>系统架构：Nginx（代理层）+ Gunicorn（中间件）+ Flask（应用层）+ SQLite（数据层）</p>
-</li>
-</ul>
-<img src="/2026/03/17/ECS/2026-03-17-09-27-50.png" class="">
+    <title>自动防御:用Fail2Ban封锁IP</title>
+    <url>/2025/12/29/Fail2Ban-ip/</url>
+    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
+<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
+<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
 
-<h2 id="网络与通信安全基线加固"><a href="#网络与通信安全基线加固" class="headerlink" title="网络与通信安全基线加固"></a>网络与通信安全基线加固</h2><h3 id="端口与访问控制加固"><a href="#端口与访问控制加固" class="headerlink" title="端口与访问控制加固"></a>端口与访问控制加固</h3><p>云服务器默认对外暴露的端口很多，很容易成为各类自动化扫描器和僵尸网络攻击的靶标，这里我用了两项措施来进行加固：</p>
-<ol>
-<li><p>依据”最小权限&#x2F;默认拒接“的原则，重新配置阿里云 ECS 的安全组策略</p>
-</li>
-<li><p>添加入方向的访问规则，仅开放必要的 web 服务端口（TCP 80， TCP 443）以及指定 IP 的 SSH 远程连接管理端口</p>
-</li>
-</ol>
-<img src="/2026/03/17/ECS/2026-03-17-09-52-07.png" class="">
+<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="数据传输保密性加固"><a href="#数据传输保密性加固" class="headerlink" title="数据传输保密性加固"></a>数据传输保密性加固</h3><p>HTTP 明文传输会导致管理员登录凭证和业务数据在网络中被嗅探和劫持，所以就用到了免费的加密证书来进行 HTTPS 传输：</p>
-<ol>
-<li>引入了 Let‘s Encrypt 证书机制，通过 Certbot 为 Nginx 配置 SSL&#x2F;TLS 加密</li>
-<li>在 Nginx 层面开启强制 HTTP 301 重定向至 HTTPS，确保所有客户端请求均在加密通道内传输</li>
-</ol>
-<p>这里有篇配置 Nginx 流程的详细文章：<a href="https://deng666-dev.github.io/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/">ECS-SSL</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 证书申请</span></span><br><span class="line">apt install certbot python3-certbot-n ginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署</span></span><br><span class="line">certbot --nginx -d vodkakkk.top</span><br></pre></td></tr></table></figure>
+<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
 
+<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+<center>Fail2Ban详细配置</center>
 
+<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
 
-<h2 id="身份鉴别与访问控制"><a href="#身份鉴别与访问控制" class="headerlink" title="身份鉴别与访问控制"></a>身份鉴别与访问控制</h2><h3 id="操作系统层身份鉴别"><a href="#操作系统层身份鉴别" class="headerlink" title="操作系统层身份鉴别"></a>操作系统层身份鉴别</h3><blockquote>
-<p>Linux 默认的 root 密码登录极易遭受 SSH 暴力破解</p>
-</blockquote>
-<p>措施：禁止 root 用户直接使用密码进行远程登录，强制改为 RSA 密钥对进行强身份认证，并创建了普通用户<code>sec_user</code>作为日常运维和应用运行账号</p>
-<img src="/2026/03/17/ECS/2026-03-17-11-16-48.png" class="">
+<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
 
-<h3 id="应用层身份鉴别"><a href="#应用层身份鉴别" class="headerlink" title="应用层身份鉴别"></a>应用层身份鉴别</h3><p>应用后台无验证或使用明文存储密码，一旦发生 SQL 注入或文件泄露，将导致防御全线崩溃</p>
-<ol>
-<li>在 Python 业务代码 <code>models.py</code> 中，引入 <code>werkzeug.security</code> 模块。管理员注册&#x2F;初始化时，调用 <code>generate_password_hash()</code> 采用 PBKDF2-SHA256 算法进行加盐哈希，将密文存入 SQLite数据库</li>
-<li>在 <code>app.py</code>核心路由中，加入 Session 校验逻辑：<code>if &#39;username&#39; not in session: return redirect(url_for(&#39;login&#39;))</code></li>
-<li>Flask 后端所有核心路由（如 <code>/dashboard</code>）均部署基于 Session 的鉴权拦截，未携带合法票据的请求将被一律重定向至登录入口</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入项目目录（这里使用的是轻量级的 SQLite）</span></span><br><span class="line"><span class="built_in">cd</span> /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 sqlite3 打开数据库</span></span><br><span class="line">sqlite3 sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看 users 表</span></span><br><span class="line"><span class="keyword">select</span> * from <span class="built_in">users</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+<center>cmd连接失败</center>
 
-<img src="/2026/03/17/ECS/2026-03-18-08-52-32.png" class="">
+<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
+<center>FinalShell断开连接</center>
 
-<center>数据库内已实现管理员口令的不可逆密文件存储</center>
+<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
+<center>明显看见 Currently 与 Banned</center>
 
-<h2 id="数据安全与文件权限管理"><a href="#数据安全与文件权限管理" class="headerlink" title="数据安全与文件权限管理"></a>数据安全与文件权限管理</h2><p>为了防止 Web 进程被攻破后导致越权访问敏感系统文件，需实施严格的目录权限隔离</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建系统极低权限账号</span></span><br><span class="line">useradd -m -s /bin/bash sec_user</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移交 Web目录所有权</span></span><br><span class="line"><span class="built_in">chown</span> -R sec_user:sec_user /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩 Web 根目录权限至 750</span></span><br><span class="line"><span class="built_in">chmod</span> -R 750 /var/www/sec_portal</span><br><span class="line"></span><br><span class="line"><span class="comment"># 收缩核心数据库文件权限至 600 （仅属主可读写）</span></span><br><span class="line"><span class="built_in">chmod</span> 600 /var/www/sec_portal/sec_portal.db</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查配置</span></span><br><span class="line"><span class="built_in">ls</span> -al /var/www/sec_portal</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 
-<img src="/2026/03/17/ECS/2026-03-18-09-16-13.png" class="">
+<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
+<center>可以看见 sshd Ban</center>
 
-<h2 id="安全审计与实时监控"><a href="#安全审计与实时监控" class="headerlink" title="安全审计与实时监控"></a>安全审计与实时监控</h2><blockquote>
-<p>等保2.0强制要求系统需具备安全审计功能，记录关键安全事件，且留存周期不少于 180 天</p>
-</blockquote>
-<ol>
-<li>IP：在 Flask 中引入 <code>ProxyFix</code> 中间件，解析 Nginx 传来的 <code>X-Forwarded-For</code> 头，防止反向代理掩盖攻击者真实IP</li>
-<li>审计日志：配置 Python 的 <code>logging</code> 模块，将登录成功、失败（异常行为）及源 IP 记录至 <code>/var/www/sec_portal/log/audit.log</code></li>
-<li>监控可视化：结合 <code>psutil</code> 模块开发前端 Dashboard，动态读取服务器 CPU&#x2F;内存状态及尾部日志（Tail -n 8），实现审计追踪的可视化</li>
-</ol>
-<img src="/2026/03/17/ECS/2026-03-18-09-45-21.png" class="">
-
-<center>可视化模块</center>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过从云原生网络层—安全组、系统层—权限隔离与密钥认证到应用层—密码散列、Session鉴权、审计日志可视化的多维度加固，本服务器及 Web 应用已成功构建出纵深防御体系。系统在低配置（2C2G）下内存与 CPU 负载表现优异，充分满足等保2.0二级&#x2F;三级标准中针对主机与应用安全的基线核查要求。</p>
-]]></content>
+<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
+<p>解封后可以看见物理机正常连接:</p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
+<center>cmd.shell连接成功</center>]]></content>
       <categories>
-        <category>Cloud Server</category>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
       </categories>
       <tags>
-        <tag>ECS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ECS-SSL</title>
-    <url>/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h2 id="Nginx-免费-SSL-证书"><a href="#Nginx-免费-SSL-证书" class="headerlink" title="Nginx 免费 SSL 证书"></a>Nginx 免费 SSL 证书</h2><blockquote>
-<p>HTTP 升级到 HTTPS 传输时，一般官网的 SSL 证书都特别贵，这里我使用到了在云服务 ECS 上部署 Nginx 时加上免费的 Let&#96;s Encrypt SSL 证书</p>
-</blockquote>
-<p>云服务系统：Ubuntu 24.04 64位 2核 2GiB</p>
-<h3 id="创建编辑-Nginx-配置文件"><a href="#创建编辑-Nginx-配置文件" class="headerlink" title="创建编辑 Nginx 配置文件"></a>创建编辑 Nginx 配置文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/sec_portal</span><br></pre></td></tr></table></figure>
-
-<h3 id="详细配置信息"><a href="#详细配置信息" class="headerlink" title="详细配置信息"></a>详细配置信息</h3><img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-13-11-48-18.png" class="">
-
-<p><cneter></center></p>
-<h3 id="启用配置-重启-Nginx"><a href="#启用配置-重启-Nginx" class="headerlink" title="启用配置 重启 Nginx"></a>启用配置 重启 Nginx</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 显示 ok 和 successful 配置文件语法就没问题</span></span><br><span class="line"><span class="built_in">ln</span> -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t systemctl reload nginx</span><br></pre></td></tr></table></figure>
-
-<h3 id="一键生成配置-HTTPS-证书"><a href="#一键生成配置-HTTPS-证书" class="headerlink" title="一键生成配置 HTTPS 证书"></a>一键生成配置 HTTPS 证书</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">certbot --nginx -d vodkakkk.top -d www.vodkakkk.top</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">交互提示：</span><br><span class="line">	one：填写真实邮箱</span><br><span class="line">	two：同意服务条款；y</span><br><span class="line">	three：是否分享邮箱：n</span><br><span class="line">	如提示信息出现 是否将 http 流量重定向 https ，选择 Redirect，为强制使用加密通道（等保2.0）</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试服务"><a href="#测试服务" class="headerlink" title="测试服务"></a>测试服务</h3><p>在浏览器中输入域名时，http会自动跳转到https，并正常访问</p>
-<h3 id="抓住公网IP"><a href="#抓住公网IP" class="headerlink" title="抓住公网IP"></a>抓住公网IP</h3><p>这里我给网站的登录系统设置了审计，当账密错误会自动记录主机IP地址，但是只会访问本机上的 Nginx，所以就是本地回环，这里提供解决方案！</p>
-<p><em><strong>该流量的流向是：用户—&gt;Nginx(443)—&gt;Flask(5000),所以对于 Flask 来说，他就会直接访问本机上的 Nginx，对于这种问题，我们就需要在 Flask 中引入 ProxyFix 中间件，让中间件去读取 Nginx 传递过来的 X-Forwarded-For 头文件，这样的话就可以抓住真实的公网 IP 了</strong></em></p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-35-51.png" class="">
-
-<br/>
-
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-37-16.png" class="">
-
-<center>这里的ip只会显示本机回环地址</center>
-
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 解决 Nginx 反向代理</span></span><br><span class="line">app.wsgi_app = ProxyFix(app.wsgi_app,x_for=<span class="number">1</span>,x_proto=<span class="number">1</span>,x_host=<span class="number">1</span>,x_prefix=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">logging.basicConfig(filename=<span class="string">&#x27;logs/audit.log&#x27;</span>,level=logging.INFO,<span class="built_in">format</span>=<span class="string">&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;</span>)</span><br><span class="line"></span><br><span class="line">models.init_db()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_db_connection</span>():</span><br><span class="line">    conn = sqlite3.connect(models.DB_PATH)</span><br><span class="line">    conn.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> conn</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>这是一个典型的 Flask + SQLite 应用的初始化 Python 代码</p>
-</blockquote>
-<p>设置完后，再次查看日志就会显示主机真实IP</p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-11-00-02.png" class="">
-
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="HTTP-不能正常指向-HTTPS"><a href="#HTTP-不能正常指向-HTTPS" class="headerlink" title="HTTP 不能正常指向 HTTPS"></a>HTTP 不能正常指向 HTTPS</h3><p>在配置完 HTTPS 时，如遇到不能正常指向的问题，需要在云服务器上安全组添加一条访问规则</p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-08-57-09.png" class="">ss]]></content>
-      <categories>
-        <category>Cloud Server</category>
-      </categories>
-      <tags>
-        <tag>ECS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo-git-node.js</title>
-    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
-<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
-<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
-<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>开发笔记</category>
-      </categories>
-      <tags>
-        <tag>hexo 搭建</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -376,77 +424,6 @@
       </tags>
   </entry>
   <entry>
-    <title>自动防御:用Fail2Ban封锁IP</title>
-    <url>/2025/12/29/Fail2Ban-ip/</url>
-    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
-<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
-<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
-
-<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
-<center>Fail2Ban详细配置</center>
-
-<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
-<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
-
-<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
-<center>cmd连接失败</center>
-
-<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
-<center>FinalShell断开连接</center>
-
-<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
-<center>明显看见 Currently 与 Banned</center>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
-<center>可以看见 sshd Ban</center>
-
-<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
-<p>解封后可以看见物理机正常连接:</p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
-<center>cmd.shell连接成功</center>]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux.centos 搭建MySql8.x服务</title>
-    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
-    <content><![CDATA[<h2 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
-
-<h2 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
-
-<h3 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h3><p>注意:设置root密码(必须设置)…</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
-
-<h2 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux server</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux-samba</title>
     <url>/2025/12/24/Linux-samba/</url>
     <content><![CDATA[<p>Linux中的Samba服务器是一个非常实用的技能，可以让你在Linux和Windows之间轻松共享文件以下提供两种方法</p>
@@ -480,6 +457,29 @@
 <p>wget命令:非交互式网络下载工具,可在后台运行<br>wget 【选项】【参数】<br>常用用法是命令后面直接跟软件包地址<br>-P指定下载目录<br>-O 指定保存文件名<br>-c 断点续传<br>-b 后台下载</p>
 <p>curl命令:传输数据(文件上传下载、表单提交、cookie处理)<br>curl【选项】【参数】<br>-o 将输出保存到文件<br>-O 使用远程文件名<br>-s保存静默模式（不显示进度）<br>-v显示详细通信过程</p>
 ]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux server</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux.centos 搭建MySql8.x服务</title>
+    <url>/2025/12/18/Linux-centos-%E6%90%AD%E5%BB%BAMySql8-x%E6%9C%8D%E5%8A%A1/</url>
+    <content><![CDATA[<h2 id="环境准备-解决centos低版本源失效问题"><a href="#环境准备-解决centos低版本源失效问题" class="headerlink" title="环境准备 解决centos低版本源失效问题"></a>环境准备 解决centos低版本源失效问题</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 备份旧的yum源配置</span></span><br><span class="line">  <span class="built_in">mv</span> /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载阿里云的 centos 7 镜像源配置</span></span><br><span class="line">  curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理缓存并生成新缓存 让系统识别新源</span></span><br><span class="line">  yum clean all</span><br><span class="line">  yum makecache</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装-MySql-配置yum仓库"><a href="#安装-MySql-配置yum仓库" class="headerlink" title="安装 MySql 配置yum仓库"></a>安装 MySql 配置yum仓库</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装Mysql官方 yum源	# 告诉Linux去哪里找mysql的安装包</span></span><br><span class="line">  rpm -Uvh https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入最新的 GPG 密钥	# 解决&quot;GPG keys are not correct&quot;报错，确保安装包验证通过</span></span><br><span class="line">  rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装Mysql服务器</span></span><br><span class="line">  yum install -y mysql-community-server</span><br></pre></td></tr></table></figure>
+
+<h2 id="启动与初始登录"><a href="#启动与初始登录" class="headerlink" title="启动与初始登录"></a>启动与初始登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动Mysql服务</span></span><br><span class="line">  systemctl start mysqld</span><br><span class="line"><span class="comment"># 设置开机自启</span></span><br><span class="line">  systemctl <span class="built_in">enable</span> mysqld</span><br><span class="line"><span class="comment"># 检查运行状态</span></span><br><span class="line">  systemctl status mysqld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看初始临时密码</span></span><br><span class="line">  grep <span class="string">&#x27;temporary password&#x27;</span> /var/log/mysqld.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录 mysql 服务器</span></span><br><span class="line">  mysql -u root -p</span><br></pre></td></tr></table></figure>
+
+<h3 id="扩展配置-修改简单密码策略"><a href="#扩展配置-修改简单密码策略" class="headerlink" title="扩展配置 修改简单密码策略"></a>扩展配置 修改简单密码策略</h3><p>注意:设置root密码(必须设置)…</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 拓展：修改密码策略参数为简单密码</span></span><br><span class="line"><span class="comment">## 将密码验证策略设为LOW （只验证长度）</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.policy=0</span><br><span class="line"><span class="comment">## 将密码最小长度设为 4</span></span><br><span class="line">  <span class="built_in">set</span> global validate_password.length=4</span><br><span class="line"><span class="comment">## 设置简单密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;123456&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="开启远程登录"><a href="#开启远程登录" class="headerlink" title="开启远程登录"></a>开启远程登录</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 可设置远程登录密码</span></span><br><span class="line">  create user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码！&#x27;</span></span><br><span class="line"><span class="comment"># 修改密码远程登录密码</span></span><br><span class="line">  ALTER USER <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;%&#x27;</span> IDENTIFIED WITH mysql_native_password BY <span class="string">&#x27;密码&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 切换到mysql系统库</span></span><br><span class="line">  use mysql</span><br><span class="line"><span class="comment"># 修改root用户的host属性为%</span></span><br><span class="line">  update user <span class="built_in">set</span> host=<span class="string">&#x27;%&#x27;</span> <span class="built_in">where</span> user=<span class="string">&#x27;root&#x27;</span></span><br><span class="line"><span class="comment"># 刷新权限 让修改立即生效</span></span><br><span class="line">  FLUSH PRIVILEGES</span><br></pre></td></tr></table></figure>
+
+<h2 id="开放防火墙端口"><a href="#开放防火墙端口" class="headerlink" title="开放防火墙端口"></a>开放防火墙端口</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开发 3306 端口 tcp协议</span></span><br><span class="line">  firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙配置</span></span><br><span class="line">  firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前开放的端口</span></span><br><span class="line">  firewall-cmd --list-ports</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>Linux 运维</category>
         <category>Linux server</category>
@@ -646,31 +646,6 @@
       </tags>
   </entry>
   <entry>
-    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
-    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
-    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
-<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
-<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
-<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
-<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
-<center>Nginx 详细配置图</center>
-
-<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
-
-<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
-</code></pre>
-<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
-      <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Web-搭建Vagrant靶场</title>
     <url>/2026/03/30/web-Vagrant/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这里是在 Ubuntu 20.04 上搭建 Vagrant 靶场的全流程，Vagrant靶场是通过自动化脚本完整驱动一整台真正的虚拟机，通常依赖 VirtualBox 虚拟化，对于常见的 DVWA 和 Pikachu 还是有很大的区别的，用以用来练习操作系统提权，内网，也可以直接拉取比较有名的包含大量的web漏洞的 Metasploitable 3，这里包含完整的流程和遇到的问题解决</p>
@@ -705,6 +680,31 @@
       </categories>
       <tags>
         <tag>Vagrant</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>web防御:Nginx配置防御点击劫持Clickjacking与XSS</title>
+    <url>/2025/12/29/web-Nginx-clickjacking-xss/</url>
+    <content><![CDATA[<p>web 安全不仅靠代码 其实 web Nginx 配置也是一道防线<br>开始前可以安全初始化一下 : </p>
+<h2 id="运行脚本移除默认的测试数据库和匿名用户"><a href="#运行脚本移除默认的测试数据库和匿名用户" class="headerlink" title="运行脚本移除默认的测试数据库和匿名用户"></a>运行脚本移除默认的测试数据库和匿名用户</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> mysql_secure_installation</span><br></pre></td></tr></table></figure>
+<p>Set root password? [Y&#x2F;n] -&gt; Y (设置一个强密码)<br>Remove anonymous users? [Y&#x2F;n] -&gt; Y<br>Disallow root login remotely? [Y&#x2F;n] -&gt; Y<br>Remove test database? [Y&#x2F;n] -&gt; Y<br>Reload privilege tables now? [Y&#x2F;n] -&gt; Y</p>
+<p><em><strong>数据库加固只是第一步，作为 Web 服务器的大门，Nginx 的 HTTP 响应头配置往往被忽视，但它能有效防御客户端攻击</strong></em></p>
+<h2 id="配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点"><a href="#配置完相关的内容后-可以部署WordPress-并配置-Nginx-防御-这里直接上重点" class="headerlink" title="配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)"></a>配置完相关的内容后 可以部署WordPress 并配置 Nginx 防御(这里直接上重点)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 防御点击劫持</span></span><br><span class="line"><span class="comment">## 禁止别人的 &lt;iframe&gt; 嵌入 防止黑客把我的网站套在透明层下骗用户点击</span></span><br><span class="line">add_header X-Frame-Options <span class="string">&quot;SAMEORIGIN&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 防御 XSS (跨站脚本)</span></span><br><span class="line"><span class="comment">## 开启浏览器自带的 XSS 的过滤器</span></span><br><span class="line">add_header X-XSS-Protection <span class="string">&quot;1; mode=block&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止 MIME 类型嗅探</span></span><br><span class="line"><span class="comment">## 强制浏览器按照服务器指定的类型解析文件，防止把图片当成脚本执行</span></span><br><span class="line">add_header X-Content-Type-Options <span class="string">&quot;nosniff&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/nginx.png" class="" title="Nginx 详细配置图">
+<center>Nginx 详细配置图</center>
+
+<h2 id="激活配置重启一下"><a href="#激活配置重启一下" class="headerlink" title="激活配置重启一下"></a>激活配置重启一下</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 建立软连接</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/wordpress /etc/nginx/sites-enabled/</span><br><span class="line"><span class="comment"># 检查语法是否正确 (非常重要)</span></span><br><span class="line"><span class="built_in">sudo</span> nginx -t</span><br><span class="line"><span class="comment"># 如果显示 successful，则重启</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置完成后可以验证一下"><a href="#配置完成后可以验证一下" class="headerlink" title="配置完成后可以验证一下"></a>配置完成后可以验证一下</h2><pre><code>打开浏览器 -&gt; F12 -&gt; Network (网络) -&gt; 刷新网页 -&gt; 点击第一个请求 -&gt; 查看 Response Headers
+</code></pre>
+<img src="/2025/12/29/web-Nginx-clickjacking-xss/response.png" class="" title="验证">]]></content>
+      <categories>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -783,18 +783,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>我的第一篇技术博客</title>
-    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
-]]></content>
-      <categories>
-        <category>随笔</category>
-      </categories>
-      <tags>
-        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
@@ -907,5 +895,17 @@
         <category>web-security</category>
         <category>web 安全-常见漏洞</category>
       </categories>
+  </entry>
+  <entry>
+    <title>我的第一篇技术博客</title>
+    <url>/2025/12/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>这是我第一次研究hexo 制作一个属于自己的技术博客 技术栈</p>
+]]></content>
+      <categories>
+        <category>随笔</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
   </entry>
 </search>
