@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ECS-SSL</title>
+    <url>/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
+    <content><![CDATA[<h2 id="Nginx-免费-SSL-证书"><a href="#Nginx-免费-SSL-证书" class="headerlink" title="Nginx 免费 SSL 证书"></a>Nginx 免费 SSL 证书</h2><blockquote>
+<p>HTTP 升级到 HTTPS 传输时，一般官网的 SSL 证书都特别贵，这里我使用到了在云服务 ECS 上部署 Nginx 时加上免费的 Let&#96;s Encrypt SSL 证书</p>
+</blockquote>
+<p>云服务系统：Ubuntu 24.04 64位 2核 2GiB</p>
+<h3 id="创建编辑-Nginx-配置文件"><a href="#创建编辑-Nginx-配置文件" class="headerlink" title="创建编辑 Nginx 配置文件"></a>创建编辑 Nginx 配置文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/sec_portal</span><br></pre></td></tr></table></figure>
+
+<h3 id="详细配置信息"><a href="#详细配置信息" class="headerlink" title="详细配置信息"></a>详细配置信息</h3><img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-13-11-48-18.png" class="">
+
+<p><cneter></center></p>
+<h3 id="启用配置-重启-Nginx"><a href="#启用配置-重启-Nginx" class="headerlink" title="启用配置 重启 Nginx"></a>启用配置 重启 Nginx</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 显示 ok 和 successful 配置文件语法就没问题</span></span><br><span class="line"><span class="built_in">ln</span> -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t systemctl reload nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="一键生成配置-HTTPS-证书"><a href="#一键生成配置-HTTPS-证书" class="headerlink" title="一键生成配置 HTTPS 证书"></a>一键生成配置 HTTPS 证书</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">certbot --nginx -d vodkakkk.top -d www.vodkakkk.top</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">交互提示：</span><br><span class="line">	one：填写真实邮箱</span><br><span class="line">	two：同意服务条款；y</span><br><span class="line">	three：是否分享邮箱：n</span><br><span class="line">	如提示信息出现 是否将 http 流量重定向 https ，选择 Redirect，为强制使用加密通道（等保2.0）</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试服务"><a href="#测试服务" class="headerlink" title="测试服务"></a>测试服务</h3><p>在浏览器中输入域名时，http会自动跳转到https，并正常访问</p>
+<h3 id="抓住公网IP"><a href="#抓住公网IP" class="headerlink" title="抓住公网IP"></a>抓住公网IP</h3><p>这里我给网站的登录系统设置了审计，当账密错误会自动记录主机IP地址，但是只会访问本机上的 Nginx，所以就是本地回环，这里提供解决方案！</p>
+<p><em><strong>该流量的流向是：用户—&gt;Nginx(443)—&gt;Flask(5000),所以对于 Flask 来说，他就会直接访问本机上的 Nginx，对于这种问题，我们就需要在 Flask 中引入 ProxyFix 中间件，让中间件去读取 Nginx 传递过来的 X-Forwarded-For 头文件，这样的话就可以抓住真实的公网 IP 了</strong></em></p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-35-51.png" class="">
+
+<br/>
+
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-37-16.png" class="">
+
+<center>这里的ip只会显示本机回环地址</center>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 解决 Nginx 反向代理</span></span><br><span class="line">app.wsgi_app = ProxyFix(app.wsgi_app,x_for=<span class="number">1</span>,x_proto=<span class="number">1</span>,x_host=<span class="number">1</span>,x_prefix=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">logging.basicConfig(filename=<span class="string">&#x27;logs/audit.log&#x27;</span>,level=logging.INFO,<span class="built_in">format</span>=<span class="string">&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;</span>)</span><br><span class="line"></span><br><span class="line">models.init_db()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_db_connection</span>():</span><br><span class="line">    conn = sqlite3.connect(models.DB_PATH)</span><br><span class="line">    conn.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> conn</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这是一个典型的 Flask + SQLite 应用的初始化 Python 代码</p>
+</blockquote>
+<p>设置完后，再次查看日志就会显示主机真实IP</p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-11-00-02.png" class="">
+
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="HTTP-不能正常指向-HTTPS"><a href="#HTTP-不能正常指向-HTTPS" class="headerlink" title="HTTP 不能正常指向 HTTPS"></a>HTTP 不能正常指向 HTTPS</h3><p>在配置完 HTTPS 时，如遇到不能正常指向的问题，需要在云服务器上安全组添加一条访问规则</p>
+<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-08-57-09.png" class="">ss]]></content>
+      <categories>
+        <category>Cloud Server</category>
+      </categories>
+      <tags>
+        <tag>ECS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2025 鹏城杯-wp</title>
     <url>/2026/02/08/2025%E9%B9%8F%E7%A8%8B%E6%9D%AF/</url>
     <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>涉及的附件都在各个靶场上摘录，每题都记录得很详细</p>
@@ -87,65 +133,67 @@
       </tags>
   </entry>
   <entry>
-    <title>CTF-MISC-common</title>
-    <url>/2025/12/22/CTF-MISC/</url>
-    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
-<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
-<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+    <title>Hexo-git-node.js</title>
+    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
+<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
+<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>CTF</category>
-        <category>CTF-MISC</category>
-        <category>Common</category>
+        <category>开发笔记</category>
       </categories>
       <tags>
-        <tag>Misc</tag>
+        <tag>hexo 搭建</tag>
       </tags>
   </entry>
   <entry>
-    <title>ECS-SSL</title>
-    <url>/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h2 id="Nginx-免费-SSL-证书"><a href="#Nginx-免费-SSL-证书" class="headerlink" title="Nginx 免费 SSL 证书"></a>Nginx 免费 SSL 证书</h2><blockquote>
-<p>HTTP 升级到 HTTPS 传输时，一般官网的 SSL 证书都特别贵，这里我使用到了在云服务 ECS 上部署 Nginx 时加上免费的 Let&#96;s Encrypt SSL 证书</p>
-</blockquote>
-<p>云服务系统：Ubuntu 24.04 64位 2核 2GiB</p>
-<h3 id="创建编辑-Nginx-配置文件"><a href="#创建编辑-Nginx-配置文件" class="headerlink" title="创建编辑 Nginx 配置文件"></a>创建编辑 Nginx 配置文件</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/nginx/sites-available/sec_portal</span><br></pre></td></tr></table></figure>
+    <title>自动防御:用Fail2Ban封锁IP</title>
+    <url>/2025/12/29/Fail2Ban-ip/</url>
+    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
+<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
+<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
 
-<h3 id="详细配置信息"><a href="#详细配置信息" class="headerlink" title="详细配置信息"></a>详细配置信息</h3><img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-13-11-48-18.png" class="">
+<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
 
-<p><cneter></center></p>
-<h3 id="启用配置-重启-Nginx"><a href="#启用配置-重启-Nginx" class="headerlink" title="启用配置 重启 Nginx"></a>启用配置 重启 Nginx</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 显示 ok 和 successful 配置文件语法就没问题</span></span><br><span class="line"><span class="built_in">ln</span> -s /etc/nginx/sites-available/sec_portal /etc/nginx/sites-enabled/ nginx -t systemctl reload nginx</span><br></pre></td></tr></table></figure>
+<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
 
-<h3 id="一键生成配置-HTTPS-证书"><a href="#一键生成配置-HTTPS-证书" class="headerlink" title="一键生成配置 HTTPS 证书"></a>一键生成配置 HTTPS 证书</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">certbot --nginx -d vodkakkk.top -d www.vodkakkk.top</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
+<center>Fail2Ban详细配置</center>
 
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">交互提示：</span><br><span class="line">	one：填写真实邮箱</span><br><span class="line">	two：同意服务条款；y</span><br><span class="line">	three：是否分享邮箱：n</span><br><span class="line">	如提示信息出现 是否将 http 流量重定向 https ，选择 Redirect，为强制使用加密通道（等保2.0）</span><br></pre></td></tr></table></figure>
+<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
 
-<h3 id="测试服务"><a href="#测试服务" class="headerlink" title="测试服务"></a>测试服务</h3><p>在浏览器中输入域名时，http会自动跳转到https，并正常访问</p>
-<h3 id="抓住公网IP"><a href="#抓住公网IP" class="headerlink" title="抓住公网IP"></a>抓住公网IP</h3><p>这里我给网站的登录系统设置了审计，当账密错误会自动记录主机IP地址，但是只会访问本机上的 Nginx，所以就是本地回环，这里提供解决方案！</p>
-<p><em><strong>该流量的流向是：用户—&gt;Nginx(443)—&gt;Flask(5000),所以对于 Flask 来说，他就会直接访问本机上的 Nginx，对于这种问题，我们就需要在 Flask 中引入 ProxyFix 中间件，让中间件去读取 Nginx 传递过来的 X-Forwarded-For 头文件，这样的话就可以抓住真实的公网 IP 了</strong></em></p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-35-51.png" class="">
+<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
+<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
 
-<br/>
+<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
+<center>cmd连接失败</center>
 
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-10-37-16.png" class="">
+<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
+<center>FinalShell断开连接</center>
 
-<center>这里的ip只会显示本机回环地址</center>
+<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
+<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
+<center>明显看见 Currently 与 Banned</center>
 
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">## 解决 Nginx 反向代理</span></span><br><span class="line">app.wsgi_app = ProxyFix(app.wsgi_app,x_for=<span class="number">1</span>,x_proto=<span class="number">1</span>,x_host=<span class="number">1</span>,x_prefix=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">logging.basicConfig(filename=<span class="string">&#x27;logs/audit.log&#x27;</span>,level=logging.INFO,<span class="built_in">format</span>=<span class="string">&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;</span>)</span><br><span class="line"></span><br><span class="line">models.init_db()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_db_connection</span>():</span><br><span class="line">    conn = sqlite3.connect(models.DB_PATH)</span><br><span class="line">    conn.row_factory = sqlite3.Row</span><br><span class="line">    <span class="keyword">return</span> conn</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>这是一个典型的 Flask + SQLite 应用的初始化 Python 代码</p>
-</blockquote>
-<p>设置完后，再次查看日志就会显示主机真实IP</p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-11-00-02.png" class="">
+<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
+<center>可以看见 sshd Ban</center>
 
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="HTTP-不能正常指向-HTTPS"><a href="#HTTP-不能正常指向-HTTPS" class="headerlink" title="HTTP 不能正常指向 HTTPS"></a>HTTP 不能正常指向 HTTPS</h3><p>在配置完 HTTPS 时，如遇到不能正常指向的问题，需要在云服务器上安全组添加一条访问规则</p>
-<img src="/2026/03/12/ECS-%E6%9C%8D%E5%8A%A1%E5%99%A8/2026-03-16-08-57-09.png" class="">ss]]></content>
+<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
+<p>解封后可以看见物理机正常连接:</p>
+<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
+<center>cmd.shell连接成功</center>]]></content>
       <categories>
-        <category>Cloud Server</category>
+        <category>Linux 运维</category>
+        <category>Linux Actual combat</category>
       </categories>
       <tags>
-        <tag>ECS</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -230,51 +278,19 @@
       </tags>
   </entry>
   <entry>
-    <title>自动防御:用Fail2Ban封锁IP</title>
-    <url>/2025/12/29/Fail2Ban-ip/</url>
-    <content><![CDATA[<p><em><strong>即使改了端口 还是有人扫怎么办？ 这时就需要雇一个保安 24小时盯防</strong></em></p>
-<h2 id="为何安装-Fail2Ban？-测试环境"><a href="#为何安装-Fail2Ban？-测试环境" class="headerlink" title="为何安装 Fail2Ban？(测试环境)"></a>为何安装 Fail2Ban？(测试环境)</h2><center>可以看见有很多不明ip尝试爆破</center>
-<img src="/2025/12/29/Fail2Ban-ip/1.png" class="">
-
-<h2 id="安装-Fail2Ban-：防暴力破解神器"><a href="#安装-Fail2Ban-：防暴力破解神器" class="headerlink" title="安装 Fail2Ban ：防暴力破解神器"></a>安装 Fail2Ban ：防暴力破解神器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install fail2ban -y</span><br><span class="line"><span class="built_in">sudo</span> systemctl start fail2ban</span><br><span class="line"><span class="built_in">sudo</span> systemctl <span class="built_in">enable</span> fail2ban</span><br><span class="line"><span class="comment"># 默认配置就能防 SSH 爆破 有其他更高的要求可以对应更改配置</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> vim /etc/fail2ban/jail.local</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/file2ban%E9%85%8D%E7%BD%AE.png" class="" title="fail2ban详细配置">
-<center>Fail2Ban详细配置</center>
-
-<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> systemctl restart fail2ban</span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/%E6%A3%80%E6%9F%A5fail2ban%E7%94%9F%E6%95%88.png" class="" title="检查是否有Status for the jail: sshd 以及 Currently banned: 0">
-<center>检查是否有Status for the jail: sshd 以及 Currently banned: 0</center>
-
-<h2 id="进行实操-物理机ssh连接"><a href="#进行实操-物理机ssh连接" class="headerlink" title="进行实操 物理机ssh连接"></a>进行实操 物理机ssh连接</h2><p><em><strong>这里我修改过端口为2222 所以必须指定port &#x3D; 2222</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5.png" class="" title="cmd连接失败">
-<center>cmd连接失败</center>
-
-<p><em><strong>这里可以看见finalshell也给我封了 一般ip指向都是同网段且为虚拟网卡ip</strong></em></p>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E7%A6%81%E6%AD%A2%E8%BF%9E%E6%8E%A5.png" class="" title="FinalShell断开连接">
-<center>FinalShell断开连接</center>
-
-<h2 id="现在我们进-Ubuntu-查看封杀-ip"><a href="#现在我们进-Ubuntu-查看封杀-ip" class="headerlink" title="现在我们进 Ubuntu 查看封杀 ip"></a>现在我们进 Ubuntu 查看封杀 ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看被封ip</span></span><br><span class="line"><span class="built_in">sudo</span> fail2ban-client status sshd</span><br></pre></td></tr></table></figure>
-<img src="/2025/12/29/Fail2Ban-ip/fail2ban%E5%B0%81%E7%A6%81ip.png" class="" title="明显看见 Currently与Banned">
-<center>明显看见 Currently 与 Banned</center>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">cat</span> /var/log/fail2ban.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
-
-<img src="/2025/12/29/Fail2Ban-ip/a.png" class="" title="可以看见 sshd Ban">
-<center>可以看见 sshd Ban</center>
-
-<h2 id="解封一下ip"><a href="#解封一下ip" class="headerlink" title="解封一下ip"></a>解封一下ip</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sudo</span> fail2ban-client <span class="built_in">set</span> sshd unbanip 192.168.88.1</span><br></pre></td></tr></table></figure>
-<p>解封后可以看见物理机正常连接:</p>
-<img src="/2025/12/29/Fail2Ban-ip/ssh%E8%BF%9E%E6%8E%A5%E6%88%90%E5%8A%9F.png" class="" title="cmd.shell连接成功">
-<center>cmd.shell连接成功</center>]]></content>
+    <title>CTF-MISC-common</title>
+    <url>/2025/12/22/CTF-MISC/</url>
+    <content><![CDATA[<h2 id="头部文件16进制编码"><a href="#头部文件16进制编码" class="headerlink" title="头部文件16进制编码"></a>头部文件16进制编码</h2><p>png 文件头：89504E47 0D0A1A0A 0000000D 49484452   文件尾：00000000 49454E44 AE426082<br>jpg 文件头：FF D8 FF E0 00 10 4A 46 49 46 00 01<br>gif 文件头：47 49 46 38 39 61（GIF89A）或 47 49 46 38 37 61（GIF87A）    文件尾：00 3B<br>bmp 文件头：42 4D<br>psd 文件头：38 42 50 53<br>TIFF 文件头：49 49 2A 00</p>
+<p>mp3 文件头：49 44 33 03 00 00 00 00<br>wav 文件头：57 41 56 45 或 52 49 46 46<br>mid 文件头：4D 54 68 64<br>avi 文件头：41 56 49 20<br>mov 文件头：00 00 00 20 66 74 79 70 71 74 20 20 20 05 03 00<br>swf 文件头：46 57 53 08 AC 43 00 00</p>
+<p>pyc 文件头：03 F3 0D 0A<br>MS-Office2003 文件头：D0 CF 11 E0<br>xml 文件头：3C 3F 78 6D 6C<br>html 文件头：68 74 6D 6C 3E<br>CAD (dwg)，文件头：41433130<br>Rich Text Format (rtf)，文件头：7B5C727466<br>Email [thorough only] (eml)，文件头：44656C69766572792D646174653A<br>Outlook Express (dbx)，文件头：CFAD12FEC5FD746F<br>Outlook (pst)，文件头：2142444E<br>MS Access (mdb)，文件头：5374616E64617264204A<br>WordPerfect (wpd)，文件头：FF575043<br>Postscript (eps.or.ps)，文件头：252150532D41646F6265<br>Adobe Acrobat (pdf)，文件头：255044462D312E<br>Quicken (qdf)，文件头：AC9EBD8F<br>Windows Password (pwl)，文件头：E3828596<br>Real Audio (ram)，文件头：2E7261FD<br>Real Media (rm)，文件头：2E524D46<br>MPEG (mpg)，文件头：000001BA 或 000001B3<br>Quicktime (mov)，文件头：6D6F6F76<br>Windows Media (asf)，文件头：3026B2758E66CF11<br>M4a，文件头：00000018667479704D3441</p>
+]]></content>
       <categories>
-        <category>Linux 运维</category>
-        <category>Linux Actual combat</category>
+        <category>CTF</category>
+        <category>CTF-MISC</category>
+        <category>Common</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
+        <tag>Misc</tag>
       </tags>
   </entry>
   <entry>
@@ -364,22 +380,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hexo-git-node.js</title>
-    <url>/2025/12/19/Hexo-%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="这里是-hexo-搭建的-Cactus-主题"><a href="#这里是-hexo-搭建的-Cactus-主题" class="headerlink" title="这里是 hexo 搭建的 Cactus 主题"></a>这里是 hexo 搭建的 Cactus 主题</h1><h1 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h1><p>hexo clean 删除本地生成的public文件<br>hexo g      生成html文件<br>hexo s      启动预览本地服务器<br>hexo d      推送到Github中</p>
-<p>写入新文章<br>hexo new “文章标题”<br>启动预览<br>hexo cl &amp;&amp; hexo s<br>部署上线<br>hexo cl &amp;&amp; hexo g &amp;&amp; hexo d<br>创建页面<br>hexo new page categories</p>
-<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>\Blog\my-blog\ 目录:<br>_config.yml 站点配置<br>-config.catus.yml 主题配置<br>&#x2F;source&#x2F;_posts  文章仓库<br>&#x2F;source&#x2F;img&#x2F;    图床</p>
-<h1 id="Tag-Plugins"><a href="#Tag-Plugins" class="headerlink" title="Tag Plugins"></a>Tag Plugins</h1>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">多色提示块：</span><br><span class="line"><span class="code">    &#123;% note blue &#x27;fas fa-bullhorn&#x27; %&#125;</span></span><br><span class="line"><span class="code">        普通提示 (blue)：适合写一般说明。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note green &#x27;fas fa-check-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        成功提示 (green)：适合写“运行成功”、“配置完成”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note orange &#x27;fas fa-exclamation-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        警告提示 (orange)：适合写“注意点”、“易错点”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note red &#x27;fas fa-times-circle&#x27; %&#125;</span></span><br><span class="line"><span class="code">        错误提示 (red)：适合写“报错信息”、“危险操作”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line"><span class="code">    &#123;% note purple &#x27;fas fa-star&#x27; %&#125;</span></span><br><span class="line"><span class="code">        高亮提示 (purple)：适合写“知识点”、“技巧”。</span></span><br><span class="line"><span class="code">    &#123;% endnote %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">行内高亮标签：</span><br><span class="line"><span class="code">    这是普通文字，但是 &#123;% label blue @Vodka %&#125; 是蓝色的，&#123;% label red @Bug %&#125; 是红色的。</span></span><br><span class="line"><span class="code">    </span></span><br><span class="line"><span class="code">选项卡：</span></span><br><span class="line"><span class="code">    &#123;% tabs 编程语言对比 %&#125;</span></span><br><span class="line"><span class="code">    ```python</span></span><br><span class="line"><span class="code">    print(&quot;Hello Vodka&quot;)</span></span><br><span class="line"><span class="code">    &#x27;&#x27;&#x27;c++</span></span><br><span class="line"><span class="code">    count &lt;&lt; &quot;Hello Vodka&quot; &lt;&lt; endl;</span></span><br><span class="line"><span class="code">    &#123;% endtabs %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">折叠卡：</span><br><span class="line"><span class="code">    ```markdown</span></span><br><span class="line"><span class="code">    &#123;% fold 点击查看详细报错日志 %&#125;</span></span><br><span class="line"><span class="code">        Error: Uncaught Exception...</span></span><br><span class="line"><span class="code">    (这里有一万行代码)</span></span><br><span class="line"><span class="code">    &#123;% endfold %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">图片与相册：</span><br><span class="line"><span class="code">    &#123;% gallery %&#125;</span></span><br><span class="line"><span class="code">        ![图1说明](/img/1.jpg)</span></span><br><span class="line"><span class="code">        ![图2说明](/img/2.jpg)</span></span><br><span class="line"><span class="code">        ![图3说明](/img/3.jpg)</span></span><br><span class="line"><span class="code">    &#123;% endgallery %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">时间轴：</span><br><span class="line"><span class="code">    &#123;% timeline %&#125;</span></span><br><span class="line"><span class="code">        搭建 Hexo 博客，部署到 GitHub。</span></span><br><span class="line"><span class="code">        配置 Butterfly 主题，添加了看板娘。</span></span><br><span class="line"><span class="code">        修复了所有 Bug，Vodka 的博客正式上线！</span></span><br><span class="line"><span class="code">    &#123;% endtimeline %&#125;</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">跳转按钮：</span><br><span class="line"><span class="code">    &#123;% btn https://github.com/xxxxx, 访问我的 GitHub, fab fa-github, blue larger %&#125;</span></span><br><span class="line"><span class="code">    &#123;% btn https://baidu.com, 点击下载源码, fas fa-download, orange %&#125;</span></span><br><span class="line"><span class="code">    ：链接 按钮文字 图标 颜色+大小</span></span><br><span class="line"><span class="code"></span></span><br><span class="line">cs专业图片：</span><br><span class="line"><span class="code">    ```mermaid</span></span><br><span class="line"><span class="code">    graph TD</span></span><br><span class="line"><span class="code">        A[开始] --&gt; B&#123;是否有Bug?&#125;</span></span><br><span class="line"><span class="code">        B -- 有 --&gt; C[找me]</span></span><br><span class="line"><span class="code">        C --&gt; D[修复Bug]</span></span><br><span class="line"><span class="code">        D --&gt; B</span></span><br><span class="line"><span class="code">        B -- 无 --&gt; E[Vodka 开心]</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>开发笔记</category>
-      </categories>
-      <tags>
-        <tag>hexo 搭建</tag>
       </tags>
   </entry>
   <entry>
