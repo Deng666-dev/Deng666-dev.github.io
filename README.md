@@ -12,8 +12,5 @@
 ## 📂 仓库结构 (Repository Structure)
 本仓库是由 [Hexo](https://hexo.io/) 强力驱动，并使用了极简的 [Cactus](https://github.com/probberechts/hexo-theme-cactus) 主题编译而成的静态页面代码。
 
-## 🚀 正在进行中的项目 (Ongoing Projects)
-- **[Linux-Security-Baseline-Auditor]**: 一款基于等保 2.0 标准的 Linux 主机自动化安全核查与加固 Bash 脚本。（开发中...）
-
 ---
 *“知其然，更要知其所以然。在底层的二进制世界里，没有魔法，只有逻辑。”*
