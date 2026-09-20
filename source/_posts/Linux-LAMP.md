@@ -1,10 +1,9 @@
 ---
-
 title: LAMP全架构搭建流程-部署WordPress
 date: 2026-01-05 09:58:46
 categories:
-    - Linux 运维
-    - Linux Actual combat
+  - Linux 运维
+  - Linux Actual combat
 tags: Linux
 ---
 LAMP = Linux + Apache + MySQL + php 全流程
